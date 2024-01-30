@@ -18,5 +18,9 @@ def index():
     return render_template('index.html',
                            courses=courses), 200
 
+@app.route("/guidelines")
+def guidelines_page():
+    return render_template('guidelines-page.html'), 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
