@@ -14,9 +14,14 @@ courses = {
 
 
 @app.route("/") #empty route, homepage route
-def index():
-    return render_template('index.html',
-                           courses=courses), 200
+def login_page():
+    return render_template('login-page.html'), 200
+
+
+@app.route("/home")
+def home_page():
+    return render_template('home-page.html', courses=courses), 200
+
 
 @app.route("/guidelines")
 def guidelines_page():
