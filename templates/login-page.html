@@ -7,54 +7,65 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
         <link rel="stylesheet" href="static/styles.css">
         <title>Rattler NoteHub</title>
+
+        <style>
+            .rounded {
+                border-radius: 5px;
+                background-color: white;
+                height: 5px;
+                width: 50%;
+                margin: 0 auto;
+                margin-bottom: 2%;
+            }
+        </style>
+        
     </head>
 
     <body>
         <div class="row">
-            <div class="col-6" style="background-color: #395a7f; color: white;">
-            <h1>Rattler</h1>
-            <h1>NoteHub</h1>
-            
-            <h5>New to the Community?</h5>
-            <p>Discover a repository of notes made by students like you ... blah blah blah</p>
-                <button type="button" class="btn" id="signup-button" 
-                style="--bs-btn-padding-y: .65rem; --bs-btn-padding-x: 2.1rem; --bs-btn-font-size: .95rem;">
-                Sign Up
-                </button>
-            
+            <!-- Sign Up Side -->
+            <div class="col-md-7 col-sm-12 d-flex align-items-center justify-content-center pb-5" style="background-color: #395a7f; color: white; padding: 20px; height: 100vh">
+                <div style="text-align: center;">
+                    <h1 style="font-size: 75px">Welcome to</h1>
+                    <h1 style="font-size: 75px">Rattler NoteHub</h1>
+                    <hr class="rounded">
+                    <h5>New to Our Community?</h5>
+                    <p>Discover a repository of notes made by students like you! 
+                        Join our collaborative environment and start contributing your ideas.
+                        Together, we can create an amplified learning experience!</p>
+                    <button type="button" class="btn" id="signup-button" 
+                    style="--bs-btn-padding-y: .65rem; --bs-btn-padding-x: 2.1rem; --bs-btn-font-size: .95rem;">
+                    Sign Up
+                    </button>
+                </div>
+
             </div>
 
-
-            <div class="col-6 mx-auto">
-                <h1>Sign in</h1>
+            <!-- Login Side -->
+            <div class="col-md-5 col-sm-12 d-flex align-items-center justify-content-center" style="background-color: white; padding: 20px;">
+                <div style="padding-left: 10px; text-align: center;">
+                    
+                    <h1>Sign in</h1>
+            
                 
-                <div class="mb-3">
-                    <div class="form-group">
-                        <input type="email" class="form-control form-control-lg" id="emailForm" placeholder="Email" style="background-color: #e9ecee; width: 60%;">
+                    <div class="form-group mb-3">
+                        <input type="email" class="form-control form-control-lg" id="emailForm" placeholder="Email" style="background-color: #e9ecee; width: 60%; width: 100%;">
                     </div>
-                </div>
-            
-                <div class="mb-3">
-                    <div class="form-group">
-                        <input type="password" class="form-control form-control-lg" id="passwordForm" placeholder="Password" style="background-color: #e9ecee; width: 60%;">
+                    
+                
+                    <div class="form-group mb-3">
+                        <input type="password" class="form-control form-control-lg" id="passwordForm" placeholder="Password" style="background-color: #e9ecee; width: 60%; width: 100%;">
                     </div>
+                
+                    <button type="button" class="btn" id="login-button" 
+                            style="color: white; --bs-btn-padding-y: .65rem; --bs-btn-padding-x: 2.1rem; --bs-btn-font-size: .95rem;">
+                            Login
+                    </button>
                 </div>
-            
-                <button type="button" class="btn" id="login-button" 
-                        style="color: white; --bs-btn-padding-y: .65rem; --bs-btn-padding-x: 2.1rem; --bs-btn-font-size: .95rem;">
-                        Login
-                </button>
-            </div>
-            
-            
             </div>
         </div>
-
-
-
-
         
-
+        
     </body>
 
 
