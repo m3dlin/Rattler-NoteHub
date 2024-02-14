@@ -27,5 +27,9 @@ def home_page():
 def guidelines_page():
     return render_template('guidelines-page.html'), 200
 
+@app.route("/addnote")
+def add_note_page():
+    return render_template('add-note-page.html'), 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

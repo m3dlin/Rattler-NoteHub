@@ -1,3 +1,7 @@
 Flask
 mysqlclient
 python-dotenv
+sqlalchemy
+beautifulsoup4
+unidecode
+requests
