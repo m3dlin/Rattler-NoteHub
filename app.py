@@ -31,5 +31,17 @@ def guidelines_page():
 def add_note_page():
     return render_template('add-note-page.html'), 200
 
+@app.route("/course/<courseId>")
+def course_page(courseId):
+    return render_template('course-page.html', courses=courses, course_number=courseId,note_count=0), 200
+
+
+#future work: route should be /viewnote/<noteId>
+@app.route("/viewnote")
+def view_note_page():
+    return render_template('note-page.html'),200
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

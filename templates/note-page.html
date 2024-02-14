@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        /* Add custom styles for the layout */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container-fluid {
+            height: 100vh; /* 100% of the viewport height */
+            display: flex;
+        }
+
+        #Note-Viewer {
+            flex: 1; /* PDF viewer takes remaining space */
+            display: flex;
+            flex-direction: column;
+        }
+
+        embed {
+            width: 100%;
+            flex: 1; /* Make the embedded PDF take full height */
+        }
+    </style>
+    <title>Note Page</title>
+</head>
+
+<body>
+    {% include 'header.html' %}
+    <div class="container-fluid">
+        <!-- Left Sidebar for Note Info -->
+        <div class="col-md-4" style="width: 25%; background-color: #f0f0f0; padding: 20px; box-sizing: border-box;">
+            {% include 'note-info-sidebar.html' %}
+        </div>
+        <!-- Main Content Area for Note Viewer -->
+        <div id="Note-Viewer" class="col-md-8" style="padding: 20px; box-sizing: border-box;">
+            {% include 'note-viewer.html' %}
+        </div>
+    </div>
+</body>
+
+</html>
