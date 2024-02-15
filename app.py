@@ -7,13 +7,29 @@ courses = {
   "CS1310": "Programming I",
   "TH1301": "Introduction to Theology",
   "CS3300": "Python for Data Analytics",
-  "CS3340": "Computer Networks",
+  "CS3330": "Computer Networks",
   "TH3350": "Moral Theology"
 }
 
+# Sample note data (replace with your actual note data)
+note_data = {
+    "title": "Sample Note",
+    "date": "2024-02-05",
+    "tags": ["Tag1", "Tag2"],
+    "description": "This is a sample note description.",
+    "content": "This is the content of the sample note.",
+    "visibility": "Public."
+}
 
 
-@app.route("/") #empty route, homepage route
+# Function to get the number of notes for a given course (replace with your actual logic)
+# move this to database.py later on...
+def get_notes_count(course_number):
+    # Example: Return a placeholder value
+    return 2
+
+# first route when user goes to website.
+@app.route("/")
 def login_page():
     return render_template('login-page.html'), 200
 
@@ -31,16 +47,17 @@ def guidelines_page():
 def add_note_page():
     return render_template('add-note-page.html'), 200
 
-@app.route("/course/<courseId>")
+@app.route("/<courseId>")
 def course_page(courseId):
-    return render_template('course-page.html', courses=courses, course_number=courseId,note_count=0), 200
+    return render_template('course-page.html', courses=courses, course_number=courseId,note_count=get_notes_count(courseId)), 200
 
 
-#future work: route should be /viewnote/<noteId>
+#future work: route should be /viewnote<noteId>
 @app.route("/viewnote")
-def view_note_page():
-    return render_template('note-page.html'),200
-
+def view_note():
+    return render_template('note-page.html', note_title=note_data["title"], note_date=note_data["date"],
+                           note_tags=note_data["tags"], note_description=note_data["description"],
+                           note_content=note_data["content"], note_visibility=note_data["visibility"]), 200
 
 
 if __name__ == '__main__':
