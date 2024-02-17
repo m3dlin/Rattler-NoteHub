@@ -5,3 +5,4 @@ sqlalchemy
 beautifulsoup4
 unidecode
 requests
+google-api-python-client
