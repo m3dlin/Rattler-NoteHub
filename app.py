@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-
+from utils.database import get_course_nums
 app = Flask(__name__)
 
 
@@ -33,6 +33,14 @@ def get_notes_count(course_number):
 def login_page():
     return render_template('login-page.html'), 200
 
+@app.route("/signup")
+def sign_up_page():
+    return render_template('sign-up-page.html'), 200
+
+@app.route("/addcourses")
+def add_courses_page():
+    courses = get_course_nums()
+    return render_template('add-courses-page.html', courses=courses), 200
 
 @app.route("/home")
 def home_page():

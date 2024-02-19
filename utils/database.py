@@ -47,9 +47,6 @@ def test_database_connection(course_ids, course_names):
             })
     
 
-
-
-
 # function used in stmu_scraper.py
 """
 def add_courses_to_DB(course_ids,course_names):
@@ -65,10 +62,17 @@ def add_courses_to_DB(course_ids,course_names):
 """
 
 
+# function to get all course numbers
+def get_course_nums():
+    courses=[] #list of course numbers
+    with engine.connect() as conn:
+        result = conn.execute(text("select courseId from Course"))
+        for row in result.all():
+            courses.append(row[0])
+        return courses
+
 """
 # testing
 if __name__ == '__main__': 
-    course_ids = ['CS1310']
-    course_names = ['Programming I']
-    test_database_connection(course_ids,course_names)
+    print('this is a test')
 """
