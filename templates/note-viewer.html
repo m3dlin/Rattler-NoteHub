@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<!-- Note Viewer -->
+<div id="Note-Viewer" style="padding: 20px;">
+    <div>
+        <!-- Embedding PDF Viewer using <embed> tag -->
+        <embed src="{{ url_for('static', filename='sample.pdf') }}" type="application/pdf" width="100%"
+            height="600px" />
+    </div>
+</div>

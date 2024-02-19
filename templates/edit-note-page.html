@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+        <link rel="stylesheet" href="static/styles.css">
+        <title>Rattler NoteHub</title>
+        <style>
+            .body {
+                font-family: 'Montserrat'
+            }
+        </style>
+    </head>
+
+    <body>
+        {% include 'header.html' %}
+        <body style="background-color:#e9ecee;">
+
+                <style>
+
+            .testbar{
+                width: 250px;
+                background-color:#e9ecee;
+                padding-top: 50px;
+                position: absolute;
+                font-family: 'Montserrat'
+            }
+
+            .barcontent{    
+                padding-top:10px;
+                padding-bottom:20px;
+                padding-left:10px
+            }
+
+            hr.blackline {
+                border-top: 3px solid black;
+                width:250px;
+            }
+
+            img.note {
+                padding-left:250px;
+                width:100%;
+                object-fit: cover;
+            }
+
+            .uploadButton{
+                padding-left:150px;
+				padding-top:350px;
+                text-align: center;
+                font-family: 'Montserrat'
+            }
+
+			.publishButton{
+                text-align: left;
+                padding-left:80px;
+                font-family: 'Montserrat'
+            }
+
+            .body {
+                font-family: 'Montserrat'
+            }
+
+            </style>
+
+        <div class="testbar">
+            <div class="barcontent">
+                <label for="title">
+                    <h2 style = "font-weight: bold;">
+                    Title:
+                    </h2>
+                    </label>
+                    <br>
+                    <input type="text" id="titleID" name="titlename" placeholder="How To illustrate...">
+            </div>
+            <hr class="blackline">
+            
+            
+        <div class="barcontent">
+            <label for="date">
+                <h2 style = "font-weight: bold;">
+                Date:
+                </h2>
+                </label>
+                <br>
+                <input type="text" id="dateID" name="dateName" placeholder="2/12/2024">
+        </div>
+        <hr class="blackline">
+        
+        <div class="barcontent">
+            <label for="tags">
+                <h2 style = "font-weight: bold;">
+                Tags:
+                </h2>
+                <br>
+                </label>
+                <select id="tag" name="tag">
+                    <option value="english">English</option>
+                    <option value="math">Math</option>
+                    <option value="history">History</option>
+                    <option value="computer science">Computer Science</option>
+                </select>
+        </div>
+        <hr class="blackline">
+        
+        <div class="barcontent">
+            <label for="description">
+                <h2 style = "font-weight: bold;">
+                Description:
+                </h2>
+                </label>
+                <br>
+                <input type="text" id="descriptionID" name="descriptionName" placeholder="Your notes">
+        </div>
+        <hr class="blackline">
+
+        <div style="padding-left:10px;">
+            <label for="visibility">
+                <h2 style = "font-weight: bold;">
+                Visibility:
+                </h2>
+                <br>
+                </label>
+        </div>
+        
+        <div style="padding-left:10px;">
+        	<select id="visibilityID" name="visibilityName" style= padding-left:10px;>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+        	</select>
+        </div>
+        <hr class="blackline">
+            
+        <div class="barcontent">
+        	<div class="publishButton">
+            	<button>Update</button>
+            </div>
+            
+        </div> 
+    	<hr class="blackline">
+        
+                <div class="barcontent">
+        	<div class="publishButton">
+            	<button>Upload</button>
+            </div>
+            
+        </div> 
+    	<hr class="blackline">
+        
+        <div class="barcontent">
+        	<div class="publishButton">
+            	<button>Delete</button>
+            </div>
+            
+        </div> 
+    	<hr class="blackline">
+
+        </div>
+
+				<img class="note" src="https://apply.jhu.edu/wp-content/uploads/2022/12/F68B7225-8555-456A-82E6-C392A8B3605B-scaled.jpg">
+            
+
+    </body>
+</html>

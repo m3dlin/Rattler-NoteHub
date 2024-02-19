@@ -1,10 +1,72 @@
 from flask import Flask, render_template
-
+from utils.database import get_course_nums
 app = Flask(__name__)
 
-@app.route("/") #empty route, homepage route
-def index():
-    return render_template('index.html'), 200
+
+courses = {
+  "CS1310": "Programming I",
+  "TH1301": "Introduction to Theology",
+  "CS3300": "Python for Data Analytics",
+  "CS3330": "Computer Networks",
+  "TH3350": "Moral Theology"
+}
+
+# Sample note data (replace with your actual note data)
+note_data = {
+    "title": "Sample Note",
+    "date": "2024-02-05",
+    "tags": ["Tag1", "Tag2"],
+    "description": "This is a sample note description.",
+    "content": "This is the content of the sample note.",
+    "visibility": "Public."
+}
+
+
+# Function to get the number of notes for a given course (replace with your actual logic)
+# move this to database.py later on...
+def get_notes_count(course_number):
+    # Example: Return a placeholder value
+    return 2
+
+# first route when user goes to website.
+@app.route("/")
+def login_page():
+    return render_template('login-page.html'), 200
+
+@app.route("/signup")
+def sign_up_page():
+    return render_template('sign-up-page.html'), 200
+
+@app.route("/addcourses")
+def add_courses_page():
+    courses = get_course_nums()
+    return render_template('add-courses-page.html', courses=courses), 200
+
+@app.route("/home")
+def home_page():
+    return render_template('home-page.html', courses=courses), 200
+
+
+@app.route("/guidelines")
+def guidelines_page():
+    return render_template('guidelines-page.html'), 200
+
+@app.route("/addnote")
+def add_note_page():
+    return render_template('add-note-page.html'), 200
+
+@app.route("/<courseId>")
+def course_page(courseId):
+    return render_template('course-page.html', courses=courses, course_number=courseId,note_count=get_notes_count(courseId)), 200
+
+
+#future work: route should be /viewnote<noteId>
+@app.route("/viewnote")
+def view_note():
+    return render_template('note-page.html', note_title=note_data["title"], note_date=note_data["date"],
+                           note_tags=note_data["tags"], note_description=note_data["description"],
+                           note_content=note_data["content"], note_visibility=note_data["visibility"]), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

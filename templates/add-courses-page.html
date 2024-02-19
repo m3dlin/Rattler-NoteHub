@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        body{
+        background: #395a7f;
+        color:white
+        }
+     </style>
+    <title>Add Courses</title>
+    <style>
+        body {
+        
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50vh;
+            margin: 0;
+            flex-direction: column; /* Center elements vertically */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 200px; /* Adjusted margin to create space between title and content */
+        }
+
+        #container {
+            text-align: center;
+        }
+
+        #tag {
+            width: 200px; /* Adjusted width for the dropdown */
+            margin-bottom: 10px; /* Added margin to move it down */
+        }
+
+        #addedText {
+            width: 200px; /* Adjusted width for the text box */
+        }
+
+        #submitButton {
+            margin-top: 10px; /* Added margin to move the button down */
+        }
+    </style>
+</head>
+<body>
+    <h1>Add Courses</h1>
+
+    <div id="container">
+        <label for="tag">Select a Course:</label>
+        <select id="tag" name="tag">
+            {% for course in courses %}
+                <option value="{{ course}}">
+                    {{ course }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label for="addedText">Added:</label>
+        <input type="text" id="addedText" name="addedText">
+
+        <br><br>
+
+        <button id="submitButton" onclick="showDone()">Submit</button>
+    </div>
+
+    <script>
+        function showDone() {
+            // You can add your logic here to handle the button click
+            alert("Submit button clicked!");
+        }
+    </script>
+</body>
+</html>
