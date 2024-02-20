@@ -35,11 +35,14 @@
 
         <!--Notes Section-->
         <div id="My-Notes-Section">
+            {% set bookmark = True %}
             <h2 style="padding-left: 20px;">Notes</h2>
             <div class="container-fluid px-4">
                 <div class="row">
-                    {% include 'note-card.html' %}
-                    {% include 'note-card.html' %}
+                    {% with bookmark=bookmark %}
+                        {% include 'note-card.html' %}
+                        {% include 'note-card.html' %}
+                    {% endwith %} 
                 </div>    
             </div>
         </div>
