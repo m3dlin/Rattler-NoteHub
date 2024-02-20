@@ -68,5 +68,12 @@ def view_note():
                            note_content=note_data["content"], note_visibility=note_data["visibility"]), 200
 
 
+#future work: route should be /editnote<noteId>
+@app.route("/editnote")
+def edit_note():
+    return render_template('edit-note-page.html'),200
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
