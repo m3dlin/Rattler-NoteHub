@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
         <link rel="stylesheet" href="static/styles.css">
         <title>Rattler NoteHub</title>
@@ -22,6 +23,10 @@
     </head>
 
     <body>
+        <!--Flash message that displays invalid login attempt-->
+
+
+
         <div class="row">
             <!-- Sign Up Side -->
             <div class="col-md-7 col-sm-12 d-flex align-items-center justify-content-center pb-5" style="background-color: #395a7f; color: white; padding: 20px; height: 100vh">
@@ -49,23 +54,39 @@
                     
                     <h1>Sign in</h1>
             
-                
-                    <div class="form-group mb-3">
-                        <input type="email" class="form-control form-control-lg" id="emailForm" placeholder="Email" style="background-color: #e9ecee; width: 60%; width: 100%;">
-                    </div>
+                    <form action="/login" method="POST">
+                        <div class="form-group mb-3">
+                            <input type="email" name="email" class="form-control form-control-lg" id="emailForm" placeholder="Email" style="background-color: #e9ecee; width: 60%; width: 100%;" required>
+                        </div>
+                        
                     
-                
-                    <div class="form-group mb-3">
-                        <input type="password" class="form-control form-control-lg" id="passwordForm" placeholder="Password" style="background-color: #e9ecee; width: 60%; width: 100%;">
-                    </div>
-                    
-                    <a href="/home">
-                        <button type="button" class="btn" id="login-button" 
+                        <div class="form-group mb-3">
+                            <input type="password" name="password" class="form-control form-control-lg" id="passwordForm" placeholder="Password" style="background-color: #e9ecee; width: 60%; width: 100%;" required>
+                        </div>
+                        
+                        
+                        <button type="submit" class="btn" id="login-button" 
                         style="color: white; --bs-btn-padding-y: .65rem; --bs-btn-padding-x: 2.1rem; --bs-btn-font-size: .95rem;">
                         Login
                         </button>
-                    </a>
 
+                    </form>
+
+                    <span id="flashMessage" class="error-message">{{ get_flashed_messages()[0] if get_flashed_messages() else '' }}</span>
+
+                    <script>
+                        // Display flash message if it exists
+                        // also adds the "is-invalid" class to the form boxes so that they highlight red.
+                        var flashMessage = document.getElementById("flashMessage");
+                        var emailInput = document.getElementById("emailForm");
+                        var passwordInput = document.getElementById("passwordForm");
+                        if (flashMessage.innerHTML.trim() !== "") {
+                            emailInput.classList.add('is-invalid');
+                            passwordInput.classList.add('is-invalid');
+                            flashMessage.style.color = "red";
+                            flashMessage.style.display = "inline";
+                        }
+                    </script>
                 </div>
             </div>
         </div>

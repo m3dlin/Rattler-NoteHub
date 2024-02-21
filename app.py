@@ -1,7 +1,11 @@
-from flask import Flask, render_template
-from utils.database import get_course_nums
+from flask import Flask, render_template, session, request, redirect, url_for, flash
+from utils.database import get_course_nums, check_credentials
+from dotenv import load_dotenv
+import os
 app = Flask(__name__)
 
+# used for sign in sessions
+app.secret_key = os.getenv('SECRET_KEY')
 
 courses = {
   "CS1310": "Programming I",
@@ -33,6 +37,21 @@ def get_notes_count(course_number):
 def login_page():
     return render_template('login-page.html'), 200
 
+@app.route("/login", methods=['POST'])
+def login_session():
+    if request.method == 'POST':
+        # collecting email and password from the name fields in the form (ex: name=email)
+        email = request.form['email']
+        password = request.form['password']
+
+        # sends the form answers to be verified. If successful, redirect user to the home page
+        if check_credentials(email=email,password=password):
+            return redirect(url_for('home'))
+        flash('Invalid email or password. Please try again.', 'error') # else, send a error flash message
+    return redirect("/") # sends user back to the login screen for a new attempt
+            
+        
+
 @app.route("/signup")
 def sign_up_page():
     return render_template('sign-up-page.html'), 200
@@ -42,7 +61,7 @@ def add_courses_page():
     courses = get_course_nums()
     return render_template('add-courses-page.html', courses=courses), 200
 
-@app.route("/home")
+@app.route("/home", endpoint='home')
 def home_page():
     return render_template('home-page.html', courses=courses), 200
 
