@@ -27,13 +27,20 @@ engine = create_engine(
         }
     }
 )
+# used for getting database info with ORM (Object-Relational Mapping)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
+# used for getting database info with reflection
+# metadata = MetaData(bind=engine)
+# metadata.reflect()
 
+# classes used to connect to database
 class Student(Base):
     __tablename__ = 'Student'
     studentId = Column(Integer, primary_key=True)
+    firstName = Column(String(255))
+    lastName = Column(String(255))
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
 
@@ -77,6 +84,15 @@ def check_credentials(email, password):
         session.close()
         return False
 
+def get_student_info(email):
+    session = Session()
+    student = session.query(Student).filter_by(email=email).first() 
+    courses=[] #list of courses student is enrolled in
+    with engine.connect() as conn:
+        result = conn.execute(text(f"select courseId from Enrolls_For where studentId = {student.studentId}"))
+        for row in result.all():
+            courses.append(row[0])
+    return student,courses
 
 """
 # testing

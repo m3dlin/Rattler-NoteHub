@@ -1,13 +1,14 @@
 from flask import Flask, render_template, session, request, redirect, url_for, flash
-from utils.database import get_course_nums, check_credentials
+from utils.database import get_course_nums, check_credentials, get_student_info
 from dotenv import load_dotenv
 import os
 app = Flask(__name__)
 
+load_dotenv()
 # used for sign in sessions
 app.secret_key = os.getenv('SECRET_KEY')
 
-courses = {
+courses_data = {
   "CS1310": "Programming I",
   "TH1301": "Introduction to Theology",
   "CS3300": "Python for Data Analytics",
@@ -46,11 +47,16 @@ def login_session():
 
         # sends the form answers to be verified. If successful, redirect user to the home page
         if check_credentials(email=email,password=password):
+            session['email'] = request.form['email']
             return redirect(url_for('home'))
         flash('Invalid email or password. Please try again.', 'error') # else, send a error flash message
     return redirect("/") # sends user back to the login screen for a new attempt
             
-        
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('email', None)
+    return redirect(url_for('/'))
 
 @app.route("/signup")
 def sign_up_page():
@@ -63,7 +69,10 @@ def add_courses_page():
 
 @app.route("/home", endpoint='home')
 def home_page():
-    return render_template('home-page.html', courses=courses), 200
+    if 'email' in session:
+        student, courses = get_student_info(email=session['email'])
+        return render_template('home-page.html', student=student, courses=courses_data), 200
+    return 'You are not logged in', 404
 
 
 @app.route("/guidelines")
@@ -76,7 +85,7 @@ def add_note_page():
 
 @app.route("/<courseId>")
 def course_page(courseId):
-    return render_template('course-page.html', courses=courses, course_number=courseId,note_count=get_notes_count(courseId)), 200
+    return render_template('course-page.html', courses=courses_data, course_number=courseId,note_count=get_notes_count(courseId)), 200
 
 
 #future work: route should be /viewnote<noteId>
