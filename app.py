@@ -34,7 +34,7 @@ def get_notes_count(course_number):
     return 2
 
 # first route when user goes to website.
-@app.route("/")
+@app.route("/",endpoint='login')
 def login_page():
     return render_template('login-page.html'), 200
 
@@ -50,13 +50,16 @@ def login_session():
             session['email'] = request.form['email']
             return redirect(url_for('home'))
         flash('Invalid email or password. Please try again.', 'error') # else, send a error flash message
+    
+    if 'email' in session:
+        redirect(url_for('home'))
     return redirect("/") # sends user back to the login screen for a new attempt
             
 @app.route('/logout')
 def logout():
-    # remove the username from the session if it's there
+    # remove the user from the session if it's there
     session.pop('email', None)
-    return redirect(url_for('/'))
+    return redirect(url_for('login'))
 
 @app.route("/signup")
 def sign_up_page():
