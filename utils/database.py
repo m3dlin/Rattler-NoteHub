@@ -4,10 +4,13 @@ The developer must create an .env file with the format stated in the README.md
 which contains the credientials of the DB.
 """
 
-from sqlalchemy import create_engine, MetaData, text
+from sqlalchemy import create_engine, MetaData, text, Column, Integer, String
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 load_dotenv()
 import os
+import bcrypt
 # Reads credentials from the config file
 user = os.getenv('DB_USER')
 password = os.getenv('DB_PASSWORD')
@@ -24,28 +27,22 @@ engine = create_engine(
         }
     }
 )
+# used for getting database info with ORM (Object-Relational Mapping)
+Session = sessionmaker(bind=engine)
+Base = declarative_base()
 
+# used for getting database info with reflection
+# metadata = MetaData(bind=engine)
+# metadata.reflect()
 
-# function for testing purposes
-def test_database_connection(course_ids, course_names):
-    metadata = MetaData()
-    metadata.reflect(bind=engine)
-
-    # Print the list of table names
-    print("Tables in the database:")
-    for table_name in metadata.tables.keys():
-        print(table_name)
-
-    with engine.connect() as conn:
-        for id,name in zip(course_ids,course_names):
-            query = text('insert into Course (courseId, courseName, courseNoteCount)'
-                            'values (:course_id, :course_name, :course_note_count)')
-            conn.execute(query,{
-                'course_id': id,
-                'course_name':name,
-                'course_note_count': 0
-            })
-    
+# classes used to connect to database
+class Student(Base):
+    __tablename__ = 'Student'
+    studentId = Column(Integer, primary_key=True)
+    firstName = Column(String(255))
+    lastName = Column(String(255))
+    email = Column(String(255), unique=True, nullable=False)
+    password = Column(String(255), nullable=False)
 
 # function used in stmu_scraper.py
 """
@@ -71,8 +68,34 @@ def get_course_nums():
             courses.append(row[0])
         return courses
 
+
+# function to check login info with users in the database
+def check_credentials(email, password):
+    # new database connection
+    session = Session()
+    # query on Student table, and filtering the results by email. The first means the first result that matches
+    student = session.query(Student).filter_by(email=email).first() 
+
+    # checks if the student exists and compares the student password with the password entered in the form.
+    if student and bcrypt.checkpw(password.encode('utf-8'),student.password.encode('utf-8')):
+        session.close()
+        return True # true if credentials align with database
+    else:
+        session.close()
+        return False
+
+def get_student_info(email):
+    session = Session()
+    student = session.query(Student).filter_by(email=email).first() 
+    courses=[] #list of courses student is enrolled in
+    with engine.connect() as conn:
+        result = conn.execute(text(f"select courseId from Enrolls_For where studentId = {student.studentId}"))
+        for row in result.all():
+            courses.append(row[0])
+    return student,courses
+
 """
 # testing
 if __name__ == '__main__': 
-    print('test function')
+    print("test")
 """
