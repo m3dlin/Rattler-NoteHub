@@ -26,6 +26,9 @@ note_data = {
     "visibility": "Public."
 }
 
+#########################
+# AUTHENTICATION ROUTES #
+#########################
 
 # Function to get the number of notes for a given course (replace with your actual logic)
 # move this to database.py later on...
@@ -64,6 +67,7 @@ def logout():
 @app.route("/signup")
 def sign_up_page():
     return render_template('sign-up-page.html'), 200
+
 
 @app.route("/addcourses")
 def add_courses_page():
