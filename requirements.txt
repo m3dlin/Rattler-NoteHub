@@ -7,4 +7,5 @@ unidecode
 requests
 google-api-python-client
 bcrypt
+pymysql
 

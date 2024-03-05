@@ -87,12 +87,27 @@ def check_credentials(email, password):
 def get_student_info(email):
     session = Session()
     student = session.query(Student).filter_by(email=email).first() 
-    courses=[] #list of courses student is enrolled in
+    courses = []  # list of dictionaries containing course id and name
+
     with engine.connect() as conn:
-        result = conn.execute(text(f"select courseId from Enrolls_For where studentId = {student.studentId}"))
+        result = conn.execute(text(f"SELECT C.courseId, C.courseName FROM Enrolls_For E JOIN Course C ON E.courseId = C.courseId WHERE E.studentId = {student.studentId}"))
+        
         for row in result.all():
-            courses.append(row[0])
-    return student,courses
+            course_info = {"id": row[0], "name": row[1]}
+            courses.append(course_info)
+
+    return student, courses
+
+
+def get_course_details(course_id):
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT courseId, courseName FROM Course WHERE courseId = :course_id"), {"course_id": course_id})
+        row = result.fetchone()
+        if row:
+            return {"id": row[0], "name": row[1]}
+        else:
+            return None
+
 
 """
 # testing

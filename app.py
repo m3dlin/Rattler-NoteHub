@@ -1,5 +1,7 @@
 from flask import Flask, render_template, session, request, redirect, url_for, flash
-from utils.database import get_course_nums, check_credentials, get_student_info
+from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details
+
+
 from dotenv import load_dotenv
 import os
 app = Flask(__name__)
@@ -74,11 +76,21 @@ def add_courses_page():
     courses = get_course_nums()
     return render_template('add-courses-page.html', courses=courses), 200
 
+
+
 @app.route("/home", endpoint='home')
 def home_page():
     if 'email' in session:
         student, courses = get_student_info(email=session['email'])
-        return render_template('home-page.html', student=student, courses=courses_data), 200
+        course_details = []
+
+        # Get details of each course for the logged-in student
+        for course in courses:
+            course_details.append({"id": course["id"], "name": course["name"]})
+
+        print(course_details)  # Debugging statement
+
+        return render_template('home-page.html', student=student, courses=course_details), 200
     return 'You are not logged in', 404
 
 
@@ -92,8 +104,13 @@ def add_note_page():
 
 @app.route("/<courseId>")
 def course_page(courseId):
-    return render_template('course-page.html', courses=courses_data, course_number=courseId,note_count=get_notes_count(courseId)), 200
-
+    course_id = courseId
+    course_details = get_course_details(course_id)  # Implement this function in your database.py
+    
+    if course_details:
+        return render_template('course-page.html', course_number=course_id, course=course_details), 200
+    else:
+        return 'Course not found', 404
 
 #future work: route should be /viewnote<noteId>
 @app.route("/viewnote")
