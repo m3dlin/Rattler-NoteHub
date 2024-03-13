@@ -4,13 +4,14 @@ The developer must create an .env file with the format stated in the README.md
 which contains the credientials of the DB.
 """
 
-from sqlalchemy import create_engine, MetaData, text, Column, Integer, String
+from sqlalchemy import create_engine, text, Column, Integer, String, TIMESTAMP, Boolean
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 load_dotenv()
 import os
 import bcrypt
+import datetime
 # Reads credentials from the config file
 user = os.getenv('DB_USER')
 password = os.getenv('DB_PASSWORD')
@@ -29,12 +30,14 @@ engine = create_engine(
 )
 # used for getting database info with ORM (Object-Relational Mapping)
 Session = sessionmaker(bind=engine)
+session = Session()
 Base = declarative_base()
 
 # used for getting database info with reflection
 # metadata = MetaData(bind=engine)
 # metadata.reflect()
 
+#########################################################################################################
 # classes used to connect to database
 class Student(Base):
     __tablename__ = 'Student'
@@ -43,6 +46,23 @@ class Student(Base):
     lastName = Column(String(255))
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
+    
+    def set_password(self, password):
+        self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+
+class Note(Base):
+    __tablename__ = 'Note'
+    noteId = Column(Integer, primary_key=True)
+    courseId = Column(String(255))
+    title = Column(String(255))
+    created_at = Column(TIMESTAMP)
+    description = Column(String(255))
+    studentId = Column(Integer, nullable=False)
+    visibility = Column(Boolean)
+    file_path = Column(String(255))
+
+#########################################################################################################
 
 # function used in stmu_scraper.py
 """
@@ -84,16 +104,40 @@ def check_credentials(email, password):
         session.close()
         return False
 
+# gets the student and courses they are enrolled for using the email logged into the session
 def get_student_info(email):
     session = Session()
     student = session.query(Student).filter_by(email=email).first() 
     courses=[] #list of courses student is enrolled in
     with engine.connect() as conn:
-        result = conn.execute(text(f"select courseId from Enrolls_For where studentId = {student.studentId}"))
+        result = conn.execute(text(f"SELECT C.courseId, C.courseName FROM Enrolls_For E JOIN Course C ON E.courseId = C.courseId WHERE E.studentId = {student.studentId}"))
         for row in result.all():
-            courses.append(row[0])
+            course_info = {"id": row[0], "name": row[1]}
+            courses.append(course_info)
     return student,courses
 
+def get_course_details(course_id):
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT courseId, courseName FROM Course WHERE courseId = :course_id"), {"course_id": course_id})
+        row = result.fetchone()
+        if row:
+            return {"id": row[0], "name": row[1]}
+        else:
+            return None
+
+# hard coding note to database
+def add_note_to_db(url):
+    new_note = Note(
+        courseId='EN 1311',
+        title='Test PDF',
+        created_at=datetime.datetime.now(),
+        description='testing uploading pdfs to database using sample pdf',
+        studentId= 123456,
+        visibility=True,
+        file_path=url
+    )
+    session.add(new_note)
+    session.commit()
 """
 # testing
 if __name__ == '__main__': 
