@@ -129,9 +129,9 @@ def get_course_details(course_id):
 def add_note_to_db(url):
     new_note = Note(
         courseId='EN 1311',
-        title='Test PDF',
+        title='Poem example',
         created_at=datetime.datetime.now(),
-        description='testing uploading pdfs to database using sample pdf',
+        description='testing uploading pdfs to database. This is a poem sample',
         studentId= 123456,
         visibility=True,
         file_path=url
