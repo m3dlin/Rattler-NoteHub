@@ -43,9 +43,10 @@ def delete_file_from_firebase(file):
     # delete file
     blob.delete()
 
-
+"""
 # testing
 if __name__ == '__main__': 
     file_path = "/Users/emilym/Downloads/poem example.pdf"
     uploaded_url = upload_to_firebase(file_path)
     print("File uploaded successfully. URL:", uploaded_url)
+"""
