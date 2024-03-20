@@ -9,7 +9,11 @@
     <hr class="blackline">
 
     <h2>Tags:</h2>
-    <p>ADD TAGS HERE</p>
+    <p>
+        {% for tag in tags %}
+            {{ tag }},
+        {% endfor %}
+    </p>
     <hr class="blackline">
 
     <h2>Description:</h2>

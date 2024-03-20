@@ -62,6 +62,11 @@ class Note(Base):
     visibility = Column(Boolean)
     file_path = Column(String(255))
 
+class Note_Tags(Base):
+    __tablename__ = 'Note_Tags'
+    nt_id = Column(Integer, primary_key=True)
+    noteId = Column(Integer, nullable=False)
+    tagId = Column(Integer, nullable=False)
 #########################################################################################################
 
 # function used in stmu_scraper.py
@@ -144,8 +149,25 @@ def get_sample_note():
     note = session.query(Note).filter_by(studentId=student_id).first()
     return note
 
+def get_note_tags(note):
+    note_id = note.noteId
+    tag_ids = []
+    tag_names = []
+    with engine.connect() as conn:
+        result = conn.execute(text(f"select tagId from Note_Tags where noteId = {note_id}"))
+        for row in result.all():
+            tag_ids.append(row[0])
+        for tag in tag_ids:
+            result2 = conn.execute(text(f"select tagName from Tag where tagId = {tag}"))
+            tag_name = result2.fetchone()[0]
+            tag_names.append(tag_name)
+
+    return tag_names
+
 """
 # testing
 if __name__ == '__main__': 
-    print("test")
+    tags = get_note_tags(get_sample_note())
+    for tag in tags:
+        print(tag)
 """
