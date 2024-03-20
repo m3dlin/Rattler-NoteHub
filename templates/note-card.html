@@ -1,6 +1,8 @@
 <div class="col-12 mx-3 mx-auto mb-3">
     <div class="card custom-border">
         <div class="card-body row">
+
+            <!--title and user who made the note-->
             <div class="col-6">
                 <a href="/viewnote" style="text-decoration-color: black; color: black;">
                     <h4>Title of Note</h4>
@@ -10,10 +12,12 @@
                 <p id="Username">Username</p>
             </div>
 
+            <!--Date posted-->
             <div class="col-4" style="text-align: right;">
                 <p id="DatePosted">January 1, 2024</p>
 
                 <p>
+                    <!--upvote and downvote buttons-->
                     <button class="btn btn-bd-secondary">
                         10
                         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-hand-thumbs-up" viewBox="0 0 16 16">
@@ -29,6 +33,7 @@
                 </p>
             </div>
 
+            <!--if the note is not the user's, display a bookmark, else display a pencil for editing -->
             <div class="col-2" style="text-align: center; padding-top: 15px;">
                 {% if bookmark %}
 

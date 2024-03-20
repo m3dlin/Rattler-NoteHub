@@ -138,6 +138,12 @@ def add_note_to_db(url):
     )
     session.add(new_note)
     session.commit()
+
+def get_sample_note():
+    student_id = 123456
+    note = session.query(Note).filter_by(studentId=student_id).first()
+    return note
+
 """
 # testing
 if __name__ == '__main__': 

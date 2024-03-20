@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, request, redirect, url_for, flash
-from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details
+from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details, get_sample_note
 from dotenv import load_dotenv
 import os
 app = Flask(__name__)
@@ -8,13 +8,7 @@ load_dotenv()
 # used for sign in sessions
 app.secret_key = os.getenv('SECRET_KEY')
 
-courses_data = {
-  "CS1310": "Programming I",
-  "TH1301": "Introduction to Theology",
-  "CS3300": "Python for Data Analytics",
-  "CS3330": "Computer Networks",
-  "TH3350": "Moral Theology"
-}
+sample_note = get_sample_note()
 
 # Sample note data (replace with your actual note data)
 note_data = {
@@ -114,9 +108,14 @@ def course_page(courseId):
 #future work: route should be /viewnote<noteId>
 @app.route("/viewnote")
 def view_note():
-    return render_template('note-page.html', note_title=note_data["title"], note_date=note_data["date"],
+    return render_template('note-page.html',sample_note = sample_note)
+    """
+        return render_template('note-page.html', note_title=note_data["title"], note_date=note_data["date"],
                            note_tags=note_data["tags"], note_description=note_data["description"],
                            note_content=note_data["content"], note_visibility=note_data["visibility"]), 200
+    """
+
+
 
 
 #future work: route should be /editnote<noteId>
