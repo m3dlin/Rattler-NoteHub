@@ -121,6 +121,7 @@ def get_student_info(email):
             courses.append(course_info)
     return student,courses
 
+# gets the course ID and name
 def get_course_details(course_id):
     with engine.connect() as conn:
         result = conn.execute(text("SELECT courseId, courseName FROM Course WHERE courseId = :course_id"), {"course_id": course_id})
@@ -130,7 +131,7 @@ def get_course_details(course_id):
         else:
             return None
 
-# hard coding note to database
+# hard coding adding note to database
 def add_note_to_db(url):
     new_note = Note(
         courseId='EN 1311',
@@ -144,19 +145,24 @@ def add_note_to_db(url):
     session.add(new_note)
     session.commit()
 
+# hard coding retrieving a note from the database
 def get_sample_note():
     student_id = 123456
     note = session.query(Note).filter_by(studentId=student_id).first()
     return note
 
+# getting the list of tags from a note
+# the variable note is a Note object
 def get_note_tags(note):
     note_id = note.noteId
     tag_ids = []
     tag_names = []
     with engine.connect() as conn:
         result = conn.execute(text(f"select tagId from Note_Tags where noteId = {note_id}"))
+        # for each tag found, add it to the tag_ids list
         for row in result.all():
             tag_ids.append(row[0])
+        # for each tag in tag_ids get the corresponding name for the tag
         for tag in tag_ids:
             result2 = conn.execute(text(f"select tagName from Tag where tagId = {tag}"))
             tag_name = result2.fetchone()[0]

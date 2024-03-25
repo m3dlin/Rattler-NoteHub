@@ -1,3 +1,9 @@
+"""
+This module will contain helper functions that pertain to using Firebase Storage.
+The developer must create an json file with the format stated in the README.md
+which contains the credientials of the DB.
+"""
+
 import firebase_admin
 from firebase_admin import credentials, storage
 from database import add_note_to_db
@@ -13,6 +19,7 @@ firebase_admin.initialize_app(cred, {
 })
 bucket = storage.bucket()
 
+# sending the file to firebase Storage
 def upload_to_firebase(file):
     
     #unique id to distinguish multiple files with same name
@@ -34,7 +41,7 @@ def upload_to_firebase(file):
 
     return url
 
-
+# permanently deleting file from Firebase
 def delete_file_from_firebase(file):
     # file needs to be the name of the file
     # Get the Blob object for the file to delete

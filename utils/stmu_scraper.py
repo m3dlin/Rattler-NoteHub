@@ -1,5 +1,7 @@
 """
 This module is used to retrieve all courses from StMU's current catalog
+Used at the beginning of development.
+Do NOT run again, this will lead to duplicate classes
 """
 
 import requests

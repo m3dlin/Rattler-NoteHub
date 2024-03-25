@@ -1,3 +1,7 @@
+"""
+This module runs the website's app and contains all the routes for the website
+"""
+
 from flask import Flask, render_template, session, request, redirect, url_for, flash
 from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details, get_sample_note, get_note_tags
 from dotenv import load_dotenv
@@ -8,10 +12,10 @@ load_dotenv()
 # used for sign in sessions
 app.secret_key = os.getenv('SECRET_KEY')
 
+# Sample note data (replace with your actual note data)
 sample_note = get_sample_note()
 sample_note_tags = get_note_tags(get_sample_note())
 
-# Sample note data (replace with your actual note data)
 note_data = {
     "title": "Sample Note",
     "date": "2024-02-05",
@@ -21,15 +25,16 @@ note_data = {
     "visibility": "Public."
 }
 
-#########################
-# AUTHENTICATION ROUTES #
-#########################
 
 # Function to get the number of notes for a given course (replace with your actual logic)
 # move this to database.py later on...
 def get_notes_count(course_number):
     # Example: Return a placeholder value
     return 2
+
+#########################
+# AUTHENTICATION ROUTES #
+#########################
 
 # first route when user goes to website.
 @app.route("/",endpoint='login')
@@ -65,13 +70,9 @@ def sign_up_page():
 
 
 
-
-
-
-@app.route("/addcourses")
-def add_courses_page():
-    courses = get_course_nums()
-    return render_template('add-courses-page.html', courses=courses), 200
+#########################
+#    MAIN/HOME ROUTES   #
+#########################
 
 @app.route("/home", endpoint='home')
 def home_page():
@@ -91,9 +92,16 @@ def home_page():
 def guidelines_page():
     return render_template('guidelines-page.html'), 200
 
-@app.route("/addnote")
-def add_note_page():
-    return render_template('add-note-page.html'), 200
+
+
+#########################
+#       SUB ROUTES      #
+#########################
+
+@app.route("/addcourses")
+def add_courses_page():
+    courses = get_course_nums()
+    return render_template('add-courses-page.html', courses=courses), 200
 
 @app.route("/<courseId>")
 def course_page(courseId):
@@ -104,6 +112,10 @@ def course_page(courseId):
         return render_template('course-page.html', course_number=course_id, course=course_details), 200
     else:
         return 'Course not found', 404
+    
+@app.route("/addnote")
+def add_note_page():
+    return render_template('add-note-page.html'), 200
 
 
 #future work: route should be /viewnote<noteId>
@@ -112,14 +124,15 @@ def view_note():
     return render_template('note-page.html',sample_note = sample_note, tags = sample_note_tags)
 
 
-
-
 #future work: route should be /editnote<noteId>
 @app.route("/editnote")
 def edit_note():
     return render_template('edit-note-page.html'),200
 
 
+#########################
+#        TESTING        #
+#########################
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
