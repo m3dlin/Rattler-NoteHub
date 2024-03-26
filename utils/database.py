@@ -60,7 +60,12 @@ class Note(Base):
     description = Column(String(255))
     studentId = Column(Integer, nullable=False)
     visibility = Column(Boolean)
+    upvotes = Column(Integer, nullable=True)
+    downvotes = Column(Integer, nullable=True)
     file_path = Column(String(255))
+
+    def get_student_name(self):
+        return get_student_name(self.studentId) 
 
 class Note_Tags(Base):
     __tablename__ = 'Note_Tags'
@@ -121,6 +126,19 @@ def get_student_info(email):
             courses.append(course_info)
     return student,courses
 
+def get_student_name(studentId):
+    with engine.connect() as conn:
+        # Execute the query to fetch the student's first name and last name
+        result = conn.execute(text(f"SELECT firstName, lastName FROM Student WHERE studentId = {studentId}"))    
+        student_info = result.fetchone()
+
+        first_name = student_info[0]
+        last_name = student_info[1]
+        full_name = first_name + " " + last_name
+
+    return full_name
+
+
 # gets the course ID and name
 def get_course_details(course_id):
     with engine.connect() as conn:
@@ -145,11 +163,40 @@ def add_note_to_db(url):
     session.add(new_note)
     session.commit()
 
-# hard coding retrieving a note from the database
-def get_sample_note():
-    student_id = 123456
-    note = session.query(Note).filter_by(studentId=student_id).first()
+
+# gets specific note based off the noteId
+def get_note(noteId):
+    note = session.query(Note).filter_by(noteId=noteId).first()
     return note
+
+
+def get_user_notes(email):
+    session = Session()
+    student = session.query(Student).filter_by(email=email).first() 
+    notes_list=[] #list of notes that the student is linked to
+    with engine.connect() as conn:
+        result = conn.execute(text(f"select * from Note where studentId = {student.studentId}"))
+        for row in result.all():
+            # creating note object and inserting all information about the note
+            note = Note()
+            note.noteId = row[0]
+            note.courseId = row[1] 
+            note.title = row[2]
+            formatted_created_at = row[3].strftime('%B %d, %Y')
+            note.created_at = formatted_created_at
+            note.description = row[4]
+            note.studentId = row[5]
+            note.visibility = row[6]
+            note.upvotes = row[7]
+            note.downvotes = row[8]
+            note.file_path = row[9]            
+            # adding note to the list of notes
+            notes_list.append(note)
+    
+    return notes_list
+
+def get_bookmarked_notes(email):
+    return None
 
 # getting the list of tags from a note
 # the variable note is a Note object
@@ -170,10 +217,10 @@ def get_note_tags(note):
 
     return tag_names
 
-"""
+
 # testing
 if __name__ == '__main__': 
-    tags = get_note_tags(get_sample_note())
-    for tag in tags:
-        print(tag)
-"""
+    notes = get_user_notes('jsmith123@mail.stmarytx.edu')
+    for note in notes:
+        print(note.title)
+

@@ -3,7 +3,7 @@ This module runs the website's app and contains all the routes for the website
 """
 
 from flask import Flask, render_template, session, request, redirect, url_for, flash
-from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details, get_sample_note, get_note_tags
+from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details, get_note, get_note_tags, get_user_notes
 from dotenv import load_dotenv
 import os
 app = Flask(__name__)
@@ -11,10 +11,6 @@ app = Flask(__name__)
 load_dotenv()
 # used for sign in sessions
 app.secret_key = os.getenv('SECRET_KEY')
-
-# Sample note data (replace with your actual note data)
-sample_note = get_sample_note()
-sample_note_tags = get_note_tags(get_sample_note())
 
 note_data = {
     "title": "Sample Note",
@@ -84,7 +80,11 @@ def home_page():
         for course in courses:
             course_details.append({"id": course["id"], "name": course["name"]})
 
-        return render_template('home-page.html', student=student, courses=course_details), 200
+
+        notes = get_user_notes(email=session['email'])
+        bookmarks = []
+
+        return render_template('home-page.html', student=student, courses=course_details, notes=notes), 200
     return 'You are not logged in', 404
 
 
@@ -119,9 +119,11 @@ def add_note_page():
 
 
 #future work: route should be /viewnote<noteId>
-@app.route("/viewnote")
-def view_note():
-    return render_template('note-page.html',sample_note = sample_note, tags = sample_note_tags)
+@app.route('/viewnote<noteId>')
+def view_note(noteId):
+    note = get_note(noteId)
+    tags = get_note_tags(note)
+    return render_template('note-page.html',note = note, tags = tags)
 
 
 #future work: route should be /editnote<noteId>
@@ -133,6 +135,11 @@ def edit_note():
 #########################
 #        TESTING        #
 #########################
+
+@app.route("/test")
+def testing():
+    notes = get_user_notes(email=session['email'])
+    return render_template('test.html', notes = notes)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
