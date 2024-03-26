@@ -4,13 +4,15 @@ The developer must create an .env file with the format stated in the README.md
 which contains the credientials of the DB.
 """
 
-from sqlalchemy import create_engine, MetaData, text, Column, Integer, String
+from sqlalchemy import create_engine, MetaData, text, Column, Integer, String, TIMESTAMP, Boolean
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 load_dotenv()
 import os
 import bcrypt
+import datetime
+
 # Reads credentials from the config file
 user = os.getenv('DB_USER')
 password = os.getenv('DB_PASSWORD')
@@ -29,6 +31,7 @@ engine = create_engine(
 )
 # used for getting database info with ORM (Object-Relational Mapping)
 Session = sessionmaker(bind=engine)
+session = Session()
 Base = declarative_base()
 
 # used for getting database info with reflection
@@ -43,6 +46,17 @@ class Student(Base):
     lastName = Column(String(255))
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
+
+class Note(Base):
+    __tablename__ = 'Note'
+    noteId = Column(Integer, primary_key=True)
+    courseId = Column(String(255))
+    title = Column(String(255))
+    created_at = Column(TIMESTAMP)
+    description = Column(String(255))
+    studentId = Column(Integer, nullable=False)
+    visibility = Column(Boolean)
+    file_path = Column(String(255))
 
 # function used in stmu_scraper.py
 """
@@ -107,6 +121,20 @@ def get_course_details(course_id):
             return {"id": row[0], "name": row[1]}
         else:
             return None
+        
+    # hard coding note to database
+def add_note_to_db(url):
+    new_note = Note(
+        courseId='EN 1311',
+        title='Poem example',
+        created_at=datetime.datetime.now(),
+        description='testing uploading pdfs to database. This is a poem sample',
+        studentId= 123456,
+        visibility=True,
+        file_path=url
+    )
+    session.add(new_note)
+    session.commit()
 
 
 """

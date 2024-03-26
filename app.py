@@ -1,3 +1,4 @@
+from sqlalchemy import Engine, create_engine, text  # Add this line to import the necessary functions
 from flask import Flask, render_template, session, request, redirect, url_for, flash
 from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details
 
@@ -88,10 +89,9 @@ def home_page():
         for course in courses:
             course_details.append({"id": course["id"], "name": course["name"]})
 
-        print(course_details)  # Debugging statement
-
         return render_template('home-page.html', student=student, courses=course_details), 200
     return 'You are not logged in', 404
+
 
 
 @app.route("/guidelines")
