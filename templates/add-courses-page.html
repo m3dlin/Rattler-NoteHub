@@ -32,7 +32,12 @@
             text-align: center;
         }
 
-        #tag {
+        #addCourses {
+            width: 200px; /* Adjusted width for the dropdown */
+            margin-bottom: 10px; /* Added margin to move it down */
+        }
+
+        #currentCourses {
             width: 200px; /* Adjusted width for the dropdown */
             margin-bottom: 10px; /* Added margin to move it down */
         }
@@ -50,29 +55,48 @@
     <h1>Add Courses</h1>
 
     <div id="container">
-        <label for="tag">Select a Course:</label>
-        <select id="tag" name="tag">
+        <label for="addCourses">Select a Course:</label>
+        <select id="addCourses" name="addCourses">
             {% for course in courses %}
                 <option value="{{ course}}">
                     {{ course }}
                 </option>
             {% endfor %}
         </select>
-
+        <button id="addButton" onclick="addCourse()">Add</button>
         <br><br>
 
         <label for="addedText">Added:</label>
-        <input type="text" id="addedText" name="addedText">
-
+        <select id="currentCourses" name="currentCourses">
+        </select>
+        <button id="removeButton" onclick="removeCourse()">Remove</button>
         <br><br>
+        <a href="/home">
+            <button id="submitButton" onclick="showDone()">Submit</button>
+        </a>
 
-        <button id="submitButton" onclick="showDone()">Submit</button>
     </div>
 
     <script>
+        function removeCourse() {
+            var elementRemove = document.getElementById("currentCourses");
+            elementRemove.remove(elementRemove.selectedIndex);
+      }
+
+        function addCourse() {
+            var elementSelect = document.getElementById("addCourses");
+            
+            var elementAdd = document.getElementById("currentCourses");
+            var option = document.createElement("option");
+            option.text = elementSelect[elementSelect.selectedIndex].value;
+            elementAdd.add(option);
+
+            elementSelect.remove(elementSelect.selectedIndex);
+        }
+
         function showDone() {
             // You can add your logic here to handle the button click
-            alert("Submit button clicked!");
+            alert("Successfully submitted!");
         }
     </script>
 </body>
