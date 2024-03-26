@@ -169,7 +169,7 @@ def get_note(noteId):
     note = session.query(Note).filter_by(noteId=noteId).first()
     return note
 
-
+# gets all the notes from the user based off the email
 def get_user_notes(email):
     session = Session()
     student = session.query(Student).filter_by(email=email).first() 
@@ -195,6 +195,7 @@ def get_user_notes(email):
     
     return notes_list
 
+# must implement this after adding bookmarks to the DB
 def get_bookmarked_notes(email):
     return None
 

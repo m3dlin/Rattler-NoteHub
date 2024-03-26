@@ -118,7 +118,6 @@ def add_note_page():
     return render_template('add-note-page.html'), 200
 
 
-#future work: route should be /viewnote<noteId>
 @app.route('/viewnote<noteId>')
 def view_note(noteId):
     note = get_note(noteId)
