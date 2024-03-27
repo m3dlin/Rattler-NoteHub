@@ -32,7 +32,12 @@
             text-align: center;
         }
 
-        #tag {
+        #addCourses {
+            width: 200px; /* Adjusted width for the dropdown */
+            margin-bottom: 10px; /* Added margin to move it down */
+        }
+
+        #currentCourses {
             width: 200px; /* Adjusted width for the dropdown */
             margin-bottom: 10px; /* Added margin to move it down */
         }
@@ -49,31 +54,71 @@
 <body>
     <h1>Add Courses</h1>
 
-    <div id="container">
-        <label for="tag">Select a Course:</label>
-        <select id="tag" name="tag">
+    <form id="courseForm" action="/submit_courses" method="POST" onsubmit="return showDone();">
+        <label for="addCourses">Select a Course:</label>
+        <select id="addCourses" name="addCourses">
             {% for course in courses %}
                 <option value="{{ course}}">
                     {{ course }}
                 </option>
             {% endfor %}
         </select>
-
+        <button id="addButton" onclick="addCourse()" type="button">Add</button>
         <br><br>
 
         <label for="addedText">Added:</label>
-        <input type="text" id="addedText" name="addedText">
-
+        <select id="currentCourses" name="currentCourses">
+        </select>
+        <button id="removeButton" onclick="removeCourse()" type="button">Remove</button>
         <br><br>
 
-        <button id="submitButton" onclick="showDone()">Submit</button>
-    </div>
+        <input type="hidden" id="hiddenCourses" name="hiddenCourses">
+        <button id="submitButton" type="submit">Submit</button>
+    </form>
 
     <script>
-        function showDone() {
-            // You can add your logic here to handle the button click
-            alert("Submit button clicked!");
+        function removeCourse() {
+            var elementRemove = document.getElementById("currentCourses");
+            var selectedOption = elementRemove.options[elementRemove.selectedIndex];
+            
+            var elementAdd = document.getElementById("addCourses");
+            var option = document.createElement("option");
+            option.text = selectedOption.value;
+            elementAdd.add(option); // adding to addCourses list
+
+            elementRemove.remove(elementRemove.selectedIndex); // removing from CurrentCourses
         }
+
+        function addCourse() {
+            var elementSelect = document.getElementById("addCourses");
+            
+            var elementAdd = document.getElementById("currentCourses");
+            var option = document.createElement("option");
+            option.text = elementSelect[elementSelect.selectedIndex].value;
+            elementAdd.add(option); // adding to currentCourses list
+
+            elementSelect.remove(elementSelect.selectedIndex); // removing from addCourses
+        }
+
+        function showDone() {
+            var currentCoursesSelect = document.getElementById("currentCourses");
+            var currentCoursesList = [];
+
+            // loop through all options in currentCoursesSelect
+            for (var i = 0; i < currentCoursesSelect.options.length; i++) {
+                currentCoursesList.push(currentCoursesSelect.options[i].value);
+            }
+
+            // set hiddenCourses to the list of courses
+            document.getElementById("hiddenCourses").value = JSON.stringify(currentCoursesList); // Convert list to JSON string
+
+            alert("Selected Courses:\n" + currentCoursesList.join("\n"));
+            alert("Successfully submitted!");
+
+            // submit the form
+            document.getElementById("courseForm").submit();
+
+            }
     </script>
 </body>
 </html>

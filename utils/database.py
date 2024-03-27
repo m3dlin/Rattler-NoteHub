@@ -72,6 +72,19 @@ class Note_Tags(Base):
     nt_id = Column(Integer, primary_key=True)
     noteId = Column(Integer, nullable=False)
     tagId = Column(Integer, nullable=False)
+
+class Enrolls_For(Base):
+    __tablename__ = 'Enrolls_For'
+    enrollId = Column(Integer, primary_key=True)
+    courseId = Column(Integer, nullable=False)
+    studentId = Column(Integer, nullable=False)
+
+class Course(Base):
+    __tablename__ = "Course"
+    courseId = Column(String(255), primary_key=True)
+    courseName = Column(String(255), nullable=False)
+    courseNoteCount = Column(Integer)
+
 #########################################################################################################
 
 # function used in stmu_scraper.py
@@ -182,7 +195,7 @@ def get_user_notes(email):
             note.noteId = row[0]
             note.courseId = row[1] 
             note.title = row[2]
-            formatted_created_at = row[3].strftime('%B %d, %Y')
+            formatted_created_at = row[3].strftime('%B %d, %Y') # formatting the date to look cleaner to the user: Month day, year
             note.created_at = formatted_created_at
             note.description = row[4]
             note.studentId = row[5]
@@ -218,10 +231,26 @@ def get_note_tags(note):
 
     return tag_names
 
+# adding courses from the selected_course list, and adding them to the database
+def add_courses_to_user(selected_courses, email):
+    student = session.query(Student).filter_by(email=email).first() 
+    with engine.connect() as conn:
+        # deleting previously enrolled classes
+        conn.execute(text(f"DELETE FROM Enrolls_For WHERE studentId = {student.studentId}"))
 
+        # adding new course list to the enrolled classes
+        for course in selected_courses:
+            new_course = session.query(Course).filter_by(courseId=course).first()
+            if new_course:
+                enrolls_for = Enrolls_For(studentId=student.studentId, courseId=new_course.courseId)
+                session.add(enrolls_for)
+        session.commit()
+
+
+
+
+"""
 # testing
 if __name__ == '__main__': 
-    notes = get_user_notes('jsmith123@mail.stmarytx.edu')
-    for note in notes:
-        print(note.title)
-
+    add_courses_to_user(['CS 1310', 'EN 1311'], 'bgarza123@mail.stmarytx.edu')
+"""

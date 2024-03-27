@@ -3,9 +3,10 @@ This module runs the website's app and contains all the routes for the website
 """
 
 from flask import Flask, render_template, session, request, redirect, url_for, flash
-from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details, get_note, get_note_tags, get_user_notes
+from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details, get_note, get_note_tags, get_user_notes, add_courses_to_user
 from dotenv import load_dotenv
 import os
+import json
 app = Flask(__name__)
 
 load_dotenv()
@@ -102,6 +103,20 @@ def guidelines_page():
 def add_courses_page():
     courses = get_course_nums()
     return render_template('add-courses-page.html', courses=courses), 200
+
+
+@app.route('/submit_courses', methods=['POST'])
+def submit_courses():
+
+    selected_courses_json = request.form.getlist('hiddenCourses') # get the json response from the form from add-courses-page.html
+
+    selected_courses = json.loads(selected_courses_json[0]) # convert the json into a regular list in python
+    
+    add_courses_to_user(selected_courses, email=session['email'])
+    return redirect(url_for('home'))  # Redirect to the add_courses_page route after submission
+
+
+
 
 @app.route("/<courseId>")
 def course_page(courseId):
