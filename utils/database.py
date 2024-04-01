@@ -246,7 +246,17 @@ def add_courses_to_user(selected_courses, email):
                 session.add(enrolls_for)
         session.commit()
 
+# adding student to the database
+def add_student_to_db(student):
+    session.add(student)
+    session.commit()
 
+# checks to see if an account has already been made with an existing ID
+def check_student_id(id):
+    # if there's an account with the same id return true
+    if session.query(Student).filter_by(studentId=id).first():
+        return True
+    return False
 
 
 """

@@ -3,7 +3,9 @@ This module runs the website's app and contains all the routes for the website
 """
 
 from flask import Flask, render_template, session, request, redirect, url_for, flash
-from utils.database import get_course_nums, check_credentials, get_student_info, get_course_details, get_note, get_note_tags, get_user_notes, add_courses_to_user
+from utils.database import (get_course_nums, check_credentials, get_student_info, 
+                            get_course_details, get_note, get_note_tags, get_user_notes, 
+                            add_courses_to_user, Student, add_student_to_db, check_student_id)
 from dotenv import load_dotenv
 import os
 import json
@@ -12,15 +14,6 @@ app = Flask(__name__)
 load_dotenv()
 # used for sign in sessions
 app.secret_key = os.getenv('SECRET_KEY')
-
-note_data = {
-    "title": "Sample Note",
-    "date": "2024-02-05",
-    "tags": ["Tag1", "Tag2"],
-    "description": "This is a sample note description.",
-    "content": "This is the content of the sample note.",
-    "visibility": "Public."
-}
 
 
 # Function to get the number of notes for a given course (replace with your actual logic)
@@ -61,10 +54,33 @@ def logout():
     session.pop('email', None)
     return redirect(url_for('login'))
 
-@app.route("/signup")
+@app.route("/signup", endpoint='signup')
 def sign_up_page():
     return render_template('sign-up-page.html'), 200
 
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    # collecting fields from the sign up page
+    first_name = request.form['fname']
+    last_name = request.form['lname']
+    student_id = request.form['StudentID']
+    email = request.form['Email']
+    password = request.form['Pword']
+
+    # checks to see if the studentID is already linked to another account, 
+    # if so the user will be redirected back to the sign up page.
+    if check_student_id(student_id):
+        flash("Student ID already has an account.", "error")
+        return redirect(url_for('signup'))
+    else:
+        # created new student object
+        new_student = Student(studentId=student_id, firstName=first_name, lastName=last_name, email=email)
+        new_student.set_password(password)
+        add_student_to_db(new_student)
+        flash("Account successfully created!")
+        return redirect(url_for('login'))  # redirect to login screen after submission
+        
+    
 
 
 #########################
@@ -113,7 +129,7 @@ def submit_courses():
     selected_courses = json.loads(selected_courses_json[0]) # convert the json into a regular list in python
     
     add_courses_to_user(selected_courses, email=session['email'])
-    return redirect(url_for('home'))  # Redirect to the add_courses_page route after submission
+    return redirect(url_for('home'))  # redirect to home after submission
 
 
 
