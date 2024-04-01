@@ -9,5 +9,4 @@ google-api-python-client
 bcrypt
 pymysql
 firebase-admin
-json
 gunicorn
