@@ -235,10 +235,10 @@ def get_note_tags(note):
 # adding courses from the selected_course list, and adding them to the database
 def add_courses_to_user(selected_courses, email):
     student = session.query(Student).filter_by(email=email).first() 
-    with engine.connect() as conn:
-        # deleting previously enrolled classes
-        conn.execute(text(f"DELETE FROM Enrolls_For WHERE studentId = {student.studentId}"))
 
+    # deleting previously enrolled classes
+    session.query(Enrolls_For).filter_by(studentId=student.studentId).delete()
+    with session.no_autoflush:
         # adding new course list to the enrolled classes
         for course in selected_courses:
             new_course = session.query(Course).filter_by(courseId=course).first()
@@ -260,8 +260,8 @@ def check_student_id(id):
     return False
 
 
-"""
+
 # testing
 if __name__ == '__main__': 
-    print(check_student_id(123456))
-"""
+    add_courses_to_user(['CS 1310', 'EN 1311'], 'bgarza123@mail.stmarytx.edu')
+
