@@ -64,7 +64,7 @@ def add_user():
     first_name = request.form['fname']
     last_name = request.form['lname']
     student_id = request.form['StudentID']
-    email = request.form['Email']
+    email = request.form['Email'] + "@mail.stmarytx.edu"
     password = request.form['Pword']
 
     # checks to see if the studentID is already linked to another account, 
