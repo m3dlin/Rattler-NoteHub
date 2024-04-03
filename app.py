@@ -5,7 +5,8 @@ This module runs the website's app and contains all the routes for the website
 from flask import Flask, render_template, session, request, redirect, url_for, flash
 from utils.database import (get_course_nums, check_credentials, get_student_info, 
                             get_course_details, get_note, get_note_tags, get_user_notes, 
-                            add_courses_to_user, Student, add_student_to_db, check_student_id)
+                            add_courses_to_user, Student, add_student_to_db, check_student_id, 
+                            get_bookmarked_notes, get_course_notes, get_note_count)
 from dotenv import load_dotenv
 import os
 import json
@@ -16,11 +17,6 @@ load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY')
 
 
-# Function to get the number of notes for a given course (replace with your actual logic)
-# move this to database.py later on...
-def get_notes_count(course_number):
-    # Example: Return a placeholder value
-    return 2
 
 #########################
 # AUTHENTICATION ROUTES #
@@ -99,9 +95,9 @@ def home_page():
 
 
         notes = get_user_notes(email=session['email'])
-        bookmarks = []
+        bookmarks = get_bookmarked_notes(email=session['email'])
 
-        return render_template('home-page.html', student=student, courses=course_details, notes=notes), 200
+        return render_template('home-page.html', student=student, courses=course_details, notes=notes, bookmarks=bookmarks), 200
     return 'You are not logged in', 404
 
 
@@ -138,9 +134,12 @@ def submit_courses():
 def course_page(courseId):
     course_id = courseId
     course_details = get_course_details(course_id)
+
+    course_notes = get_course_notes(course_id)
     
     if course_details:
-        return render_template('course-page.html', course_number=course_id, course=course_details), 200
+        return render_template('course-page.html', course_number=course_id, course=course_details, 
+                               note_count=get_note_count(course_id), notes=course_notes), 200
     else:
         return 'Course not found', 404
     

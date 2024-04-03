@@ -185,7 +185,6 @@ def get_note(noteId):
 
 # gets all the notes from the user based off the email
 def get_user_notes(email):
-    session = Session()
     student = session.query(Student).filter_by(email=email).first() 
     notes_list=[] #list of notes that the student is linked to
     with engine.connect() as conn:
@@ -209,9 +208,66 @@ def get_user_notes(email):
     
     return notes_list
 
-# must implement this after adding bookmarks to the DB
+# gets all bookmarked notes based on the user
 def get_bookmarked_notes(email):
-    return None
+    student = session.query(Student).filter_by(email=email).first() 
+    bookmark_list = [] #list of bookmarked notes that the student is linked to
+    with engine.connect() as conn:
+        result = conn.execute(text(f"select noteId from Bookmark where studentId = {student.studentId}"))
+        for note_id in result.all():
+            note_result = conn.execute(text(f"select * from Note where noteId = {note_id[0]}"))
+            for row in note_result.all():
+                # creating note object and inserting all information about the note
+                note = Note()
+                note.noteId = row[0]
+                note.courseId = row[1] 
+                note.title = row[2]
+                formatted_created_at = row[3].strftime('%B %d, %Y') # formatting the date to look cleaner to the user: Month day, year
+                note.created_at = formatted_created_at
+                note.description = row[4]
+                note.studentId = row[5]
+                note.visibility = row[6]
+                note.upvotes = row[7]
+                note.downvotes = row[8]
+                note.file_path = row[9]            
+                # adding note to the bookmark list
+                bookmark_list.append(note)
+
+    return bookmark_list
+
+# gets all the notes that are related to a specific course
+def get_course_notes(courseId):
+    notes_list = []
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT * FROM Note WHERE courseId = :course_id"), {'course_id': courseId})
+
+        # collecting all the note objects and adding them to a list
+        for row in result.all():
+            # creating note object and inserting all information about the note
+            note = Note()
+            note.noteId = row[0]
+            note.courseId = row[1] 
+            note.title = row[2]
+            formatted_created_at = row[3].strftime('%B %d, %Y') # formatting the date to look cleaner to the user: Month day, year
+            note.created_at = formatted_created_at
+            note.description = row[4]
+            note.studentId = row[5]
+            note.visibility = row[6]
+            note.upvotes = row[7]
+            note.downvotes = row[8]
+            note.file_path = row[9]            
+            # adding note to the list of notes
+            notes_list.append(note)
+    
+    return notes_list
+
+# get the total amount of notes for a specific course
+def get_note_count(courseId):
+    result = session.execute(text("select count(*) as note_count from Note where courseId = :course_id"),{'course_id': courseId}).fetchone()
+    note_count = result[0] 
+    return note_count
+
+
 
 # getting the list of tags from a note
 # the variable note is a Note object
@@ -263,5 +319,5 @@ def check_student_id(id):
 
 # testing
 if __name__ == '__main__': 
-    add_courses_to_user(['CS 1310', 'EN 1311'], 'bgarza123@mail.stmarytx.edu')
+    print(get_course_notes('EN 1311'))
 
