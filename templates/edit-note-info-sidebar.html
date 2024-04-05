@@ -1,0 +1,68 @@
+<!-- Edit Note Info Sidebar -->
+<div id="Note-Info-Sidebar" style="background-color: #f0f0f0; padding: 20px;">
+    <form id="noteForm" action="/update_note" method="POST" onsubmit="return validateForm();">
+        <h2>Title:</h2>
+        <textarea id="title">{{ note.title }}</textarea>
+        <hr class="blackline">
+    
+        <h2>Date:</h2>
+        <p>{{ note.created_at }}</p>
+        <hr class="blackline">
+    
+        <h2>Tags:</h2>
+        <select id="tag">
+            {% for tag in tags %}
+                <option> {{tag}}</option>
+            {% endfor %}
+        </select>
+        <hr class="blackline">
+    
+        <h2>Description:</h2>
+        <textarea id="description">{{ note.description }}</textarea>
+        <hr class="blackline">
+    
+        <h2>Visibility:</h2>
+    
+        <select id="visibility">
+            <option>Public</option>
+            <option>Private</option>
+        </select>
+        <hr class="blackline">
+    
+        <h2>Delete Note:</h2>
+        <button type="button" onclick="deleteNote()">Delete</button>
+        <hr class="blackline">
+    
+        <h2>Update Note: </h2>
+        <button type="submit">Update</button>
+        <input type="hidden" id="hiddenNoteId" name="hiddenNoteId">
+        <hr class="blackline">
+    </form>
+
+
+    <script>
+        function validateForm() {
+                // getting values from the form
+                var title = document.getElementById("title").value;
+                var description = document.getElementById("description").value;
+
+                // check if fields are left empty
+                if (title.trim() === '' || description.trim() === '') {
+                    alert("Please make sure you have a title and description");
+                    return false; // prevent form submission
+                }
+                else{
+                    return true; // form is ready for submission
+                }
+            }
+
+        function deleteNote() {
+            var confirmation = confirm("Are you sure you want to delete this note?");
+            if (confirmation) {
+                alert('Note has successfully been deleted.')
+                var noteData = JSON.parse('{{ note|tojson|safe }}'); //parsing so that you can use the note object in js
+                document.getElementById("hiddenNoteId").value = noteData.noteId;
+            }
+        }
+    </script>
+</div>

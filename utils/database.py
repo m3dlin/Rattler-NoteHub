@@ -243,27 +243,29 @@ def get_course_notes(courseId):
 
         # collecting all the note objects and adding them to a list
         for row in result.all():
-            # creating note object and inserting all information about the note
-            note = Note()
-            note.noteId = row[0]
-            note.courseId = row[1] 
-            note.title = row[2]
-            formatted_created_at = row[3].strftime('%B %d, %Y') # formatting the date to look cleaner to the user: Month day, year
-            note.created_at = formatted_created_at
-            note.description = row[4]
-            note.studentId = row[5]
-            note.visibility = row[6]
-            note.upvotes = row[7]
-            note.downvotes = row[8]
-            note.file_path = row[9]            
-            # adding note to the list of notes
-            notes_list.append(note)
-    
+
+            # collecting only notes set to Public
+            if(row[6] == True):
+                # creating note object and inserting all information about the note
+                note = Note()
+                note.noteId = row[0]
+                note.courseId = row[1] 
+                note.title = row[2]
+                formatted_created_at = row[3].strftime('%B %d, %Y') # formatting the date to look cleaner to the user: Month day, year
+                note.created_at = formatted_created_at
+                note.description = row[4]
+                note.studentId = row[5]
+                note.visibility = row[6]
+                note.upvotes = row[7]
+                note.downvotes = row[8]
+                note.file_path = row[9]            
+                # adding note to the list of notes
+                notes_list.append(note)
     return notes_list
 
 # get the total amount of notes for a specific course
 def get_note_count(courseId):
-    result = session.execute(text("select count(*) as note_count from Note where courseId = :course_id"),{'course_id': courseId}).fetchone()
+    result = session.execute(text("select count(*) as note_count from Note where courseId = :course_id and visibility = 1"),{'course_id': courseId}).fetchone()
     note_count = result[0] 
     return note_count
 
@@ -315,6 +317,14 @@ def check_student_id(id):
         return True
     return False
 
+
+def get_list_of_tags():
+    tags = []
+    with engine.connect() as conn:
+        result = conn.execute(text(f"select tagName from Tag"))
+        for row in result.all():
+            tags.append(row[0])
+    return tags
 
 
 # testing

@@ -21,5 +21,11 @@
     <hr class="blackline">
 
     <h2>Visibility:</h2>
-    <p>{{ note.visibility }}</p>
+    <p>
+        {% if note.visibility %}
+            <p>Public</p>
+        {% else %}
+            <p>Private</p>
+        {% endif %}
+    </p>
 </div>

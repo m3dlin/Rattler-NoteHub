@@ -6,7 +6,7 @@ from flask import Flask, render_template, session, request, redirect, url_for, f
 from utils.database import (get_course_nums, check_credentials, get_student_info, 
                             get_course_details, get_note, get_note_tags, get_user_notes, 
                             add_courses_to_user, Student, add_student_to_db, check_student_id, 
-                            get_bookmarked_notes, get_course_notes, get_note_count)
+                            get_bookmarked_notes, get_course_notes, get_note_count, get_list_of_tags)
 from dotenv import load_dotenv
 import os
 import json
@@ -129,7 +129,6 @@ def submit_courses():
 
 
 
-
 @app.route("/<courseId>")
 def course_page(courseId):
     course_id = courseId
@@ -143,22 +142,34 @@ def course_page(courseId):
     else:
         return 'Course not found', 404
     
+
 @app.route("/addnote")
 def add_note_page():
     return render_template('add-note-page.html'), 200
 
 
+# future work: ensure that the note is made public
+# currently, if anyone has access to the note id, they can view the note
 @app.route('/viewnote<noteId>')
 def view_note(noteId):
     note = get_note(noteId)
     tags = get_note_tags(note)
     return render_template('note-page.html',note = note, tags = tags)
 
+# future work: ensure that the user who is logged in is the only one who can edit the note
+# currently, if anyone has access to the note id, they can edit any note they want.
+@app.route("/editnote<noteId>")
+def edit_note(noteId):
+    note = get_note(noteId)
+    tags = get_list_of_tags()
+    return render_template('edit-note-page.html', note=note, tags=tags),200
 
-#future work: route should be /editnote<noteId>
-@app.route("/editnote")
-def edit_note():
-    return render_template('edit-note-page.html'),200
+@app.route("/delete_note")
+def delete_note():
+    note_id = int(request.form.get('hiddenNoteId'))
+    return redirect(url_for('home'))
+    
+
 
 
 #########################
