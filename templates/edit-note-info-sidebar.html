@@ -1,8 +1,12 @@
 <!-- Edit Note Info Sidebar -->
 <div id="Note-Info-Sidebar" style="background-color: #f0f0f0; padding: 20px;">
-    <form id="noteForm" action="/update_note" method="POST" onsubmit="return validateForm();">
+
+    <form id="noteForm" action="/update_note{{note.noteId}}" method="POST" onsubmit="return validateForm();">
+        
+        <input type="hidden" id="hiddenNoteId" name="hiddenNoteId" value="{{ note.noteId }}">
+        
         <h2>Title:</h2>
-        <textarea id="title">{{ note.title }}</textarea>
+        <textarea id="title" name="title">{{ note.title }}</textarea>
         <hr class="blackline">
     
         <h2>Date:</h2>
@@ -10,7 +14,7 @@
         <hr class="blackline">
     
         <h2>Tags:</h2>
-        <select id="tag">
+        <select id="tag" name="tag">
             {% for tag in tags %}
                 <option> {{tag}}</option>
             {% endfor %}
@@ -18,12 +22,12 @@
         <hr class="blackline">
     
         <h2>Description:</h2>
-        <textarea id="description">{{ note.description }}</textarea>
+        <textarea id="description" name="description">{{ note.description }}</textarea>
         <hr class="blackline">
     
         <h2>Visibility:</h2>
     
-        <select id="visibility">
+        <select id="visibility" name="visibility">
             <option>Public</option>
             <option>Private</option>
         </select>
@@ -35,7 +39,6 @@
     
         <h2>Update Note: </h2>
         <button type="submit">Update</button>
-        <input type="hidden" id="hiddenNoteId" name="hiddenNoteId">
         <hr class="blackline">
     </form>
 
@@ -60,8 +63,6 @@
             var confirmation = confirm("Are you sure you want to delete this note?");
             if (confirmation) {
                 alert('Note has successfully been deleted.')
-                var noteData = JSON.parse('{{ note|tojson|safe }}'); //parsing so that you can use the note object in js
-                document.getElementById("hiddenNoteId").value = noteData.noteId;
             }
         }
     </script>

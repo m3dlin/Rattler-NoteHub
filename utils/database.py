@@ -67,6 +67,11 @@ class Note(Base):
 
     def get_student_name(self):
         return get_student_name(self.studentId) 
+    
+class Tag(Base):
+    __tablename__ = 'Tag'
+    tagId = Column(Integer, primary_key=True)
+    tagName = Column(String(255))
 
 class Note_Tags(Base):
     __tablename__ = 'Note_Tags'
@@ -317,7 +322,7 @@ def check_student_id(id):
         return True
     return False
 
-
+# get list of all tags currently in the database
 def get_list_of_tags():
     tags = []
     with engine.connect() as conn:
@@ -325,6 +330,33 @@ def get_list_of_tags():
         for row in result.all():
             tags.append(row[0])
     return tags
+
+
+# tags comes from Note_Tags
+def update_selected_note(noteId, title, description, tag, visibility):
+    note = session.query(Note).filter_by(noteId=noteId).first()
+    
+    # if the note is found
+    if note:
+        # update the fields with new values
+        note.title = title
+        
+        # deleting previous tag
+        session.query(Note_Tags).filter_by(noteId=noteId).delete()
+        # adding new note tag
+        tag = session.query(Tag).filter_by(tagName=tag).first() # get tag id by the name that was passed
+        new_tag = Note_Tags(noteId=noteId, tagId=tag.tagId)
+        session.add(new_tag)
+
+        note.description = description
+        if visibility == 'Public':
+            note.visibility = True
+        else:
+            note.visibility = False
+        session.commit()
+        return True # return that the update was successful
+    else:
+        return False
 
 
 # testing

@@ -6,7 +6,8 @@ from flask import Flask, render_template, session, request, redirect, url_for, f
 from utils.database import (get_course_nums, check_credentials, get_student_info, 
                             get_course_details, get_note, get_note_tags, get_user_notes, 
                             add_courses_to_user, Student, add_student_to_db, check_student_id, 
-                            get_bookmarked_notes, get_course_notes, get_note_count, get_list_of_tags)
+                            get_bookmarked_notes, get_course_notes, get_note_count, get_list_of_tags,
+                            update_selected_note)
 from dotenv import load_dotenv
 import os
 import json
@@ -164,7 +165,23 @@ def edit_note(noteId):
     tags = get_list_of_tags()
     return render_template('edit-note-page.html', note=note, tags=tags),200
 
-@app.route("/delete_note")
+@app.route("/update_note<noteId>", methods=['POST'])
+def update_note(noteId):
+    updated_title = request.form.get('title')
+    updated_description = request.form.get('description')
+    updated_tag = request.form.get('tag')
+    updated_visibility = request.form.get('visibility')
+
+    if update_selected_note(noteId=noteId, title=updated_title, description=updated_description,
+                            tag=updated_tag, visibility=updated_visibility):
+        return redirect(url_for('home'))
+    else:
+        return 'Could not complete updating note', 404
+    
+
+
+
+@app.route("/delete_note", methods=['DELETE'])
 def delete_note():
     note_id = int(request.form.get('hiddenNoteId'))
     return redirect(url_for('home'))
