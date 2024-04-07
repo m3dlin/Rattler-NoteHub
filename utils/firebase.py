@@ -6,7 +6,7 @@ which contains the credientials of the DB.
 
 import firebase_admin
 from firebase_admin import credentials, storage
-from database import add_note_to_db
+from utils.database import add_note_to_db
 from urllib.parse import quote
 import uuid
 
@@ -42,10 +42,15 @@ def upload_to_firebase(file):
     return url
 
 # permanently deleting file from Firebase
-def delete_file_from_firebase(file):
+def delete_file_from_firebase(url):
+    # extract the encoded_file_path   
+    start_index = url.find("/o/") + len("/o/")
+    end_index = url.find("?alt=media")
+    encoded_file_path = url[start_index:end_index]
+    
     # file needs to be the name of the file
     # Get the Blob object for the file to delete
-    blob = bucket.blob(file)
+    blob = bucket.blob(encoded_file_path)
 
     # delete file
     blob.delete()
@@ -53,7 +58,19 @@ def delete_file_from_firebase(file):
 """
 # testing
 if __name__ == '__main__': 
-    file_path = "/Users/emilym/Downloads/poem example.pdf"
+
+    file_path = "/Users/emilym/Downloads/haiku.pdf"
     uploaded_url = upload_to_firebase(file_path)
     print("File uploaded successfully. URL:", uploaded_url)
+
+    
+    url = "https://firebasestorage.googleapis.com/v0/b/rattler-notehub.appspot.com/o/haiku.pdf_b44a4928-c6ce-4792-ba86-de6f7b868c88?alt=media"
+    
+    # extract the encoded_file_path
+    start_index = url.find("/o/") + len("/o/")
+    end_index = url.find("?alt=media")
+    encoded_file_path = url[start_index:end_index]
+
+    print("Encoded File Path:", encoded_file_path)
+
 """

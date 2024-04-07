@@ -172,14 +172,22 @@ def get_course_details(course_id):
 def add_note_to_db(url):
     new_note = Note(
         courseId='EN 1311',
-        title='Poem example',
+        title='HAIKU DELETE EXAMPLE',
         created_at=datetime.datetime.now(),
-        description='testing uploading pdfs to database. This is a poem sample',
+        description='testing deleting notes from DB',
         studentId= 123456,
         visibility=True,
         file_path=url
     )
     session.add(new_note)
+    session.commit()
+    print(new_note.noteId)
+    new_note_tags = Note_Tags(
+        noteId=new_note.noteId,
+        tagId=4
+    )
+   
+    session.add(new_note_tags)
     session.commit()
 
 
@@ -358,8 +366,26 @@ def update_selected_note(noteId, title, description, tag, visibility):
     else:
         return False
 
+def delete_selected_note(noteId):
+    note = session.query(Note).filter_by(noteId=noteId).first()
+    
+    # if the note is found
+    if note:
+        # try to delete note, if it does not detect the note in the DB, then rollback query and return false
+        try:
+            session.query(Note).filter_by(noteId=note.noteId).delete()
+            session.commit()
+            return True
+        except Exception as e:
+            session.rollback()
+            return False
+    else:
+        return False
+
 
 # testing
 if __name__ == '__main__': 
-    print(get_course_notes('EN 1311'))
+    #print(delete_selected_note(10))
+    add_note_to_db("https://firebasestorage.googleapis.com/v0/b/rattler-notehub.appspot.com/o/haiku.pdf_b44a4928-c6ce-4792-ba86-de6f7b868c88?alt=media")
+
 
