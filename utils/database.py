@@ -383,9 +383,29 @@ def delete_selected_note(noteId):
         return False
 
 
+def increment_upvotes(noteId):
+    note = session.query(Note).filter_by(noteId=noteId).first()
+    if note.upvotes == None:
+        note.upvotes = 1
+    else:
+        note.upvotes += 1
+    session.commit()
+    return note.upvotes
+
+def increment_downvotes(noteId):
+    note = session.query(Note).filter_by(noteId=noteId).first()
+    if note.downvotes == None:
+        note.downvotes = 1
+    else:
+        note.downvotes += 1
+    session.commit()
+    return note.downvotes
+
+
+
 # testing
 if __name__ == '__main__': 
     #print(delete_selected_note(10))
-    add_note_to_db("https://firebasestorage.googleapis.com/v0/b/rattler-notehub.appspot.com/o/haiku.pdf_b44a4928-c6ce-4792-ba86-de6f7b868c88?alt=media")
-
+    #add_note_to_db("https://firebasestorage.googleapis.com/v0/b/rattler-notehub.appspot.com/o/haiku.pdf_b44a4928-c6ce-4792-ba86-de6f7b868c88?alt=media")
+    print(type(increment_upvotes(5)))
 

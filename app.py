@@ -2,12 +2,13 @@
 This module runs the website's app and contains all the routes for the website
 """
 
-from flask import Flask, render_template, session, request, redirect, url_for, flash
+from flask import Flask, render_template, session, request, redirect, url_for, flash, jsonify
 from utils.database import (get_course_nums, check_credentials, get_student_info, 
                             get_course_details, get_note, get_note_tags, get_user_notes, 
                             add_courses_to_user, Student, add_student_to_db, check_student_id, 
                             get_bookmarked_notes, get_course_notes, get_note_count, get_list_of_tags,
-                            update_selected_note, delete_selected_note, Note)
+                            update_selected_note, delete_selected_note, Note, increment_upvotes,
+                            increment_downvotes)
 from utils.firebase import delete_file_from_firebase
 from dotenv import load_dotenv
 import os
@@ -130,7 +131,7 @@ def submit_courses():
     return redirect(url_for('home'))  # redirect to home after submission
 
 
-
+# display course page
 @app.route("/<courseId>")
 def course_page(courseId):
     course_id = courseId
@@ -194,6 +195,28 @@ def delete_note():
         return redirect(url_for('home'))
     else:
         return 'Could not complete deleting note', 404
+
+
+
+@app.route('/upvote', methods=['POST'])
+def upvote():
+    data = request.get_json()  # Assuming noteId is sent in JSON format
+    note_id = data.get('noteId')
+    # Update the upvotes count in the database
+    new_upvotes_count = increment_upvotes(note_id)
+    return jsonify({'upvotes': new_upvotes_count})
+
+
+@app.route('/downvote', methods=['POST'])
+def downvote():
+    data = request.get_json()  # Assuming noteId is sent in JSON format
+    note_id = data.get('noteId')
+    # Update the upvotes count in the database
+    new_downvotes_count = increment_downvotes(note_id)
+    return jsonify({'downvotes': new_downvotes_count})
+
+
+
 
 
 
