@@ -91,6 +91,12 @@ class Course(Base):
     courseName = Column(String(255), nullable=False)
     courseNoteCount = Column(Integer)
 
+class Bookmark(Base):
+    __tablename__ = "Bookmark"
+    bookmarkId = Column(Integer, primary_key=True)
+    noteId = Column(Integer)
+    studentId = Column(Integer)
+
 #########################################################################################################
 
 # function used in stmu_scraper.py
@@ -401,11 +407,51 @@ def increment_downvotes(noteId):
     session.commit()
     return note.downvotes
 
+def add_bookmark(noteId, email):
+    note = session.query(Note).filter_by(noteId=noteId).first()
+    student = session.query(Student).filter_by(email=email).first()
 
+    if note and student:
+        existing_bookmark = session.query(Bookmark).filter_by(noteId=note.noteId, studentId=student.studentId).first()
+        if existing_bookmark:
+            return True  # bookmark already exists for this student and note, do not duplicate entry
+        else:
+            new_bookmark = Bookmark(noteId=note.noteId, studentId=student.studentId)
+            session.add(new_bookmark)
+            session.commit()
+            return True # return true since bookmark was added
+    else:
+        return False # note/student not found
 
+def delete_bookmark(noteId, email):
+    note = session.query(Note).filter_by(noteId=noteId).first()
+    student = session.query(Student).filter_by(email=email).first()
+    
+    if note and student:
+        existing_bookmark = session.query(Bookmark).filter_by(noteId=note.noteId, studentId=student.studentId).first()
+        if existing_bookmark:
+            session.delete(existing_bookmark)
+            session.commit()
+            return True # return true since bookmark was deleted
+        else:
+            return True # return true even though the bookmark was not found, it means that there's no bookmark to begin with
+    else:
+        return False  # note/student not found
+
+def check_bookmark_status(noteId, email):
+    student = session.query(Student).filter_by(email=email).first()
+    bookmark = session.query(Bookmark).filter_by(noteId=noteId,studentId=student.studentId).first()
+    if bookmark:
+        return True
+    else:
+        return False
+
+"""
 # testing
 if __name__ == '__main__': 
-    #print(delete_selected_note(10))
     #add_note_to_db("https://firebasestorage.googleapis.com/v0/b/rattler-notehub.appspot.com/o/haiku.pdf_b44a4928-c6ce-4792-ba86-de6f7b868c88?alt=media")
-    print(type(increment_upvotes(5)))
+    #print(delete_bookmark(4, 'bgarza123@mail.stmarytx.edu'))
+    print('test')
+
+"""
 

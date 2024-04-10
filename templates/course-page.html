@@ -40,7 +40,9 @@
             <div class="container-fluid px-4">
                 <div class="row">
                     {% with bookmark=bookmark %}
-                        {% for note in notes %}
+                        {% for i in range(notes|length) %}
+                            {% set note = notes[i] %}
+                            {% set bookmarkStatus = bookmark_status_list[i] %}
                             {% include 'note-card.html' %}
                         {% endfor %}
                     {% endwith %} 

@@ -44,9 +44,32 @@
                 {% if bookmark %}
 
                 <!--bookmark button-->
-                <button class="btn" style="border-radius: 50%; border: 5px; border-color: black; width: 40px; height: 40px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#acacac" class="bi bi-bookmark-fill" viewBox="0 0 16 16">
+                <button id="bookmarkButton{{note.noteId}}" class="btn" style="border-radius: 50%; border: 5px; border-color: black; width: 40px; height: 40px;" >
+                    
+                    {% if bookmarkStatus %}
+                        <svg id="firstFilledBookmark{{note.noteId}}" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#acacac" class="bi bi-bookmark-fill" viewBox="0 0 16 16">
+                            <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2"/>
+                        </svg>
+                        <svg id="firstEmptyBookmark{{note.noteId}}" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#acacac" class="bi bi-bookmark" viewBox="0 0 16 16" style="display: none;">
+                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                        </svg>
+                    {% else %}
+                        <svg id="firstEmptyBookmark{{note.noteId}}" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#acacac" class="bi bi-bookmark" viewBox="0 0 16 16">
+                            <text>firstEmpty</text>
+                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                        </svg>
+                        <svg id="firstFilledBookmark{{note.noteId}}" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#acacac" class="bi bi-bookmark-fill" viewBox="0 0 16 16" style="display: none;">
+                            <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2"/>
+                        </svg>
+                    {% endif %}
+
+                    <svg id="filledBookmark{{note.noteId}}" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#acacac" class="bi bi-bookmark-fill" viewBox="0 0 16 16" style="display: none;">
                         <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2"/>
+                    </svg>
+
+                    <svg id="emptyBookmark{{note.noteId}}" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#acacac" class="bi bi-bookmark" viewBox="0 0 16 16" style="display: none;">
+                        <text>regularEmpty</text>
+                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
                     </svg>
 
                 </button>
@@ -108,7 +131,50 @@
         });
 
 
+        var bookmarkButton = document.getElementById('bookmarkButton{{note.noteId}}');
 
+        bookmarkButton.addEventListener('click', () => {
+            
+            var filledBookmark = document.getElementById('filledBookmark{{note.noteId}}');
+            var emptyBookmark = document.getElementById('emptyBookmark{{note.noteId}}');
+
+            var firstFilledBookmark = document.getElementById('firstFilledBookmark{{note.noteId}}');
+            var firstEmptyBookmark = document.getElementById('firstEmptyBookmark{{note.noteId}}');
+            
+
+            if(firstFilledBookmark.style.display !== 'none'){
+                firstFilledBookmark.style.display = 'none';
+                emptyBookmark.style.display = 'inline'
+
+            }
+            else if(firstEmptyBookmark.style.display !== 'none'){
+                firstEmptyBookmark.style.display = 'none'
+                filledBookmark.style.display = 'inline'
+            }
+            else if(firstEmptyBookmark.style.display == 'none' && firstFilledBookmark.style.display == 'none'){
+                //if filledBookmark display is set to none, then turn it to inline and vice versa for emptyBookmark
+                // swapping which one is displayed when clicked
+                filledBookmark.style.display = filledBookmark.style.display === 'none' ? 'inline' : 'none';
+                emptyBookmark.style.display = emptyBookmark.style.display === 'none' ? 'inline' : 'none';
+            }
+
+
+            // to be sent with the POST
+            var bookmarkStatus = filledBookmark.style.display === 'none' ? 'empty' : 'filled';
+            var note_id = document.getElementById("hiddenNoteId{{note.noteId}}").value;
+
+            // Send POST request to add or remove bookmark with status
+            fetch('/bookmark', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ noteId: note_id, bookmarkStatus: bookmarkStatus })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Bookmark status updated:', data))
+            .catch(error => console.error('Error:', error));
+            });
 
 
     </script>

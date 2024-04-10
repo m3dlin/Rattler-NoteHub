@@ -8,7 +8,7 @@ from utils.database import (get_course_nums, check_credentials, get_student_info
                             add_courses_to_user, Student, add_student_to_db, check_student_id, 
                             get_bookmarked_notes, get_course_notes, get_note_count, get_list_of_tags,
                             update_selected_note, delete_selected_note, Note, increment_upvotes,
-                            increment_downvotes)
+                            increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status)
 from utils.firebase import delete_file_from_firebase
 from dotenv import load_dotenv
 import os
@@ -138,10 +138,16 @@ def course_page(courseId):
     course_details = get_course_details(course_id)
 
     course_notes = get_course_notes(course_id)
-    
+    bookmark_status_list = []
+
+    # Check bookmark status for each note
+    for note in course_notes:
+        is_bookmarked = check_bookmark_status(noteId=note.noteId, email=session['email'])
+        bookmark_status_list.append(is_bookmarked)
+
     if course_details:
         return render_template('course-page.html', course_number=course_id, course=course_details, 
-                               note_count=get_note_count(course_id), notes=course_notes), 200
+                               note_count=get_note_count(course_id), notes=course_notes,bookmark_status_list=bookmark_status_list), 200
     else:
         return 'Course not found', 404
     
@@ -200,7 +206,7 @@ def delete_note():
 
 @app.route('/upvote', methods=['POST'])
 def upvote():
-    data = request.get_json()  # Assuming noteId is sent in JSON format
+    data = request.get_json()  # noteId is sent in JSON format
     note_id = data.get('noteId')
     # Update the upvotes count in the database
     new_upvotes_count = increment_upvotes(note_id)
@@ -209,11 +215,35 @@ def upvote():
 
 @app.route('/downvote', methods=['POST'])
 def downvote():
-    data = request.get_json()  # Assuming noteId is sent in JSON format
+    data = request.get_json()  # noteId is sent in JSON format
     note_id = data.get('noteId')
-    # Update the upvotes count in the database
+    # Update the downvote count in the database
     new_downvotes_count = increment_downvotes(note_id)
     return jsonify({'downvotes': new_downvotes_count})
+
+
+@app.route('/bookmark', methods=['POST'])
+def bookmark():
+    data = request.get_json()  # noteId is sent in JSON format
+    note_id = data.get('noteId')
+    bookmark_status = data.get('bookmarkStatus')
+
+    if bookmark_status == 'filled':
+        if add_bookmark(noteId=note_id, email=session['email']):
+            message = 'bookmark added'
+        else:
+            message = 'added error'
+
+    elif bookmark_status == 'empty':
+        if delete_bookmark(noteId=note_id, email=session['email']):
+            message = 'bookmark deleted'
+        else:
+            message = 'delete error'
+
+    else:
+        message = 'error'
+
+    return jsonify(message=message), 200
 
 
 
