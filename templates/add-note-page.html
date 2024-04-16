@@ -15,7 +15,7 @@
         </style>
     </head>
 
-    <body>
+    <body onload="date()">
         {% include 'header.html' %}
                 <style>
 
@@ -46,15 +46,14 @@
             }
 
             .uploadButton{
-                padding-left:150px;
-				padding-top:350px;
+                padding-top:center;
                 text-align: center;
                 font-family: 'Montserrat'
             }
 
 			.publishButton{
                 text-align: left;
-                padding-left:80px;
+                padding-left:75px;
                 font-family: 'Montserrat'
             }
 
@@ -62,7 +61,22 @@
                 font-family: 'Montserrat'
             }
 
+            .pdf {
+                padding-left:200px;
+                padding-top:center;
+                text-align: center;
+                width: 100%;
+            }
+
             </style>
+            
+<div style="display: flex">
+
+    <object id="change" class="pdf" 
+    data="https://mag.wcoomd.org/uploads/2018/05/blank.pdf"
+    width="800"
+    height="1020">
+    </object>
 
         <div class="testbar">
             <div class="barcontent">
@@ -75,16 +89,31 @@
                     <input type="text" id="titleID" name="titlename" placeholder="Note title...">
             </div>
             <hr class="blackline">
+            <div style="padding-left:10px;">
+                <label for="courseNumber">
+                    <h2 style = "font-weight: bold;">
+                    Course:
+                    </h2>
+                    <br>
+                    </label>
+            </div>
             
+            <div style="padding-left:10px;">
+                <!--change to dynamic values-->
+                <select id="courseID" name="courseName" style= padding-left:10px;>
+                        <option>CS1311</option>
+                        <option>EN1311</option>
+                </select>
+            </div>
+            <hr class="blackline">
             
         <div class="barcontent">
             <label for="date">
                 <h2 style = "font-weight: bold;">
                 Date:
-                </h2>
+                <span id="dateID"></span></h2>
                 </label>
                 <br>
-                <input type="text" id="dateID" name="dateName" placeholder="Note Date...">
         </div>
         <hr class="blackline">
         
@@ -134,22 +163,49 @@
             
         <div class="barcontent">
         	<div class="publishButton">
-            	<button>Publish</button>
+            	<button onclick = "publish()" >Publish</button>
             </div>
             
         </div> 
     	<hr class="blackline">
-        </div>
-
-
-
+        
         <div class="note">
-
             <div class="uploadButton">
-                <button>Upload</button>
-            </div> 
-            
+                <input type="file" multiple="false" accept="application/pdf" id=finput onchange="upload()">            
         </div>
+    </div>
 
+
+        
+
+
+        <script>
+        function publish(){
+            var noteTitle = document.getElementById("titleID").value;
+            var noteCourse = document.getElementById("courseID").value;
+            var noteDate = document.getElementById("dateID").innerHTML = m + "/" + d + "/" + y;
+            var noteTags = document.getElementById("tag").value;
+            var noteDescription = document.getElementById("descriptionID").value;
+            var noteVisibility = document.getElementById("visibilityID").value;
+            var noteLink = document.getElementById("finput").value;
+
+            alert("Title: " + noteTitle + "\nCourse: " + noteCourse + "\nDate: " + noteDate + "\nTags: " + noteTags + "\nDescription: " + noteDescription + "\nVisibility: " + noteVisibility + "\nLink: " + noteLink);
+        }
+
+        function date(){
+            n =  new Date();
+            y = n.getFullYear();
+            m = n.getMonth() + 1;
+            d = n.getDate();
+            document.getElementById("dateID").innerHTML = m + "/" + d + "/" + y;
+        }
+
+        function upload(){
+                var fileinput = document.getElementById("finput");
+                var element = document.getElementById("change");
+                element.setAttribute("data", fileinput)
+        }
+
+        </script>
     </body>
 </html>
