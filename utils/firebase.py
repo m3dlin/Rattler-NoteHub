@@ -59,6 +59,4 @@ def delete_file_from_firebase(url):
 # testing
 if __name__ == '__main__': 
     print('hello world')
-    url = 'https://firebasestorage.googleapis.com/v0/b/rattler-notehub.appspot.com/o/Lab%206_Wireshark%20Ethernet%20and%20ARP.pdf_9d83b6df-2875-4659-b5f1-b7d6de792803?alt=media'
-    delete_file_from_firebase(url=url)
 """
