@@ -163,6 +163,10 @@ def get_student_name(studentId):
 
     return full_name
 
+def get_student_id(email):
+    student = session.query(Student).filter_by(email=email).first() 
+    return student.studentId
+
 
 # gets the course ID and name
 def get_course_details(course_id):
@@ -175,26 +179,34 @@ def get_course_details(course_id):
             return None
 
 # hard coding adding note to database
-def add_note_to_db(url):
+def add_note_to_db(courseId, title, description, studentId, visibility, tag, url):
+    
+    if visibility == 'Public':
+        visibility_status = True
+    else:
+        visibility_status = False
+    
     new_note = Note(
-        courseId='EN 1311',
-        title='HAIKU DELETE EXAMPLE',
+        courseId=courseId,
+        title=title,
         created_at=datetime.datetime.now(),
-        description='testing deleting notes from DB',
-        studentId= 123456,
-        visibility=True,
+        description=description,
+        studentId= studentId,
+        visibility= visibility_status,
         file_path=url
     )
     session.add(new_note)
     session.commit()
-    print(new_note.noteId)
+
+    new_tag = get_tag_id(tagName=tag)
+
     new_note_tags = Note_Tags(
         noteId=new_note.noteId,
-        tagId=4
+        tagId=new_tag.tagId
     )
-   
     session.add(new_note_tags)
     session.commit()
+    return True
 
 
 # gets specific note based off the noteId
@@ -308,6 +320,12 @@ def get_note_tags(note):
             tag_names.append(tag_name)
 
     return tag_names
+
+
+def get_tag_id(tagName):
+    tag = session.query(Tag).filter_by(tagName=tagName).first() 
+    return tag
+
 
 # adding courses from the selected_course list, and adding them to the database
 def add_courses_to_user(selected_courses, email):

@@ -3,13 +3,13 @@ This module runs the website's app and contains all the routes for the website
 """
 
 from flask import Flask, render_template, session, request, redirect, url_for, flash, jsonify
-from utils.database import (get_course_nums, check_credentials, get_student_info, 
+from utils.database import (get_course_nums, check_credentials, get_student_info,get_student_id,
                             get_course_details, get_note, get_note_tags, get_user_notes, 
                             add_courses_to_user, Student, add_student_to_db, check_student_id, 
                             get_bookmarked_notes, get_course_notes, get_note_count, get_list_of_tags,
                             update_selected_note, delete_selected_note, Note, increment_upvotes,
-                            increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status)
-from utils.firebase import delete_file_from_firebase
+                            increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status, add_note_to_db)
+from utils.firebase import delete_file_from_firebase, upload_to_firebase
 from dotenv import load_dotenv
 import os
 import json
@@ -154,7 +154,42 @@ def course_page(courseId):
 
 @app.route("/addnote")
 def add_note_page():
-    return render_template('add-note-page.html'), 200
+    tags = get_list_of_tags()
+    student, courses = get_student_info(email=session['email'])
+    id_values = [course['id'] for course in courses]
+    return render_template('add-note-page.html', tags=tags,courses=id_values), 200
+
+@app.route("/submit_note",methods=['POST'])
+def submit_note():
+    # retreive the updated information from the note
+    courseId = request.form.get('courseName')
+    title = request.form.get('titlename')
+    description = request.form.get('descriptionName')
+    studentId = get_student_id(email=session['email'])
+    visibility = request.form.get('visibilityName')
+    tag = request.form.get('tag')
+    pdf_file = request.files['pdf_file']
+
+    if pdf_file:
+        # temporarily saving the pdf file
+        file_path = f"uploads/{pdf_file.filename}"
+        pdf_file.save(file_path)
+
+        uploaded_url = upload_to_firebase(file_path)
+        os.remove(file_path) # remove the temp file
+        
+        if add_note_to_db(courseId,title,description,studentId,visibility,tag, uploaded_url):
+            return redirect(url_for('home'))
+    else:
+        return 'Could not complete adding note', 404
+
+
+
+
+
+
+
+
 
 
 # future work: ensure that the note is made public

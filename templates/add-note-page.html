@@ -15,158 +15,216 @@
         </style>
     </head>
 
-    <body>
+    <body onload="date()">
         {% include 'header.html' %}
-                <style>
+            <style>
 
-            .testbar{
-                width: 250px;
-                background-color:#e9ecee;
-                padding-top: 50px;
-                position: absolute;
-                font-family: 'Montserrat'
-            }
+                .testbar{
+                    width: 250px;
+                    background-color:#e9ecee;
+                    padding-top: 50px;
+                    position: absolute;
+                    font-family: 'Montserrat'
+                }
 
-            .barcontent{    
-                padding-top:10px;
-                padding-bottom:20px;
-                padding-left:10px
-            }
+                .barcontent{    
+                    padding-top:10px;
+                    padding-bottom:20px;
+                    padding-left:10px
+                }
 
-            hr.blackline {
-                border-top: 3px solid black;
-                width:250px;
-            }
+                hr.blackline {
+                    border-top: 3px solid black;
+                    width:250px;
+                }
 
-            .noteonly{
-                padding-left:150px;
-                height:100%;
-                width:100%;
-                object-fit: cover;
-            }
+                .noteonly{
+                    padding-left:150px;
+                    height:100%;
+                    width:100%;
+                    object-fit: cover;
+                }
 
-            .uploadButton{
-                padding-left:150px;
-				padding-top:350px;
-                text-align: center;
-                font-family: 'Montserrat'
-            }
+                .uploadButton{
+                    padding-top:center;
+                    text-align: center;
+                    font-family: 'Montserrat'
+                }
 
-			.publishButton{
-                text-align: left;
-                padding-left:80px;
-                font-family: 'Montserrat'
-            }
+                .publishButton{
+                    text-align: left;
+                    padding-left:75px;
+                    font-family: 'Montserrat'
+                }
 
-            .body {
-                font-family: 'Montserrat'
-            }
+                .body {
+                    font-family: 'Montserrat'
+                }
+
+                .pdf {
+                    padding-left:200px;
+                    padding-top:center;
+                    text-align: center;
+                    width: 100%;
+                }
+                #tag {
+                    padding: 5px;
+                    font-size: 16px;
+                    width: 160px;
+                }
 
             </style>
+        
+        <form id="noteForm" action="/submit_note" method="POST" enctype="multipart/form-data">
+            <div style="display: flex">
 
-        <div class="testbar">
-            <div class="barcontent">
-                <label for="title">
-                    <h2 style = "font-weight: bold;">
-                    Title:
-                    </h2>
-                    </label>
-                    <br>
-                    <input type="text" id="titleID" name="titlename" placeholder="Note title...">
-            </div>
-            <hr class="blackline">
-            <div style="padding-left:10px;">
-                <label for="courseNumber">
-                    <h2 style = "font-weight: bold;">
-                    Course:
-                    </h2>
-                    <br>
-                    </label>
-            </div>
-            
-            <div style="padding-left:10px;">
-                <!--change to dynamic values-->
-                <select id="visibilityID" name="visibilityName" style= padding-left:10px;>
-                        <option>CS1311</option>
-                        <option>EN1311</option>
-                </select>
-            </div>
-            <hr class="blackline">
-            
-            
-            <div class="barcontent">
-                <label for="date">
-                    <h2 style = "font-weight: bold;">
-                    Date:
-                    </h2>
-                    </label>
-                    <br>
-                    <input type="text" id="dateID" name="dateName" placeholder="Note Date...">
-            </div>
-            <hr class="blackline">
-        
-            <div class="barcontent">
-                <label for="tags">
-                    <h2 style = "font-weight: bold;">
-                    Tags:
-                    </h2>
-                    <br>
-                    </label>
-                    <select id="tag" name="tag">
-                        <option value="math">Math</option>
-                        <option value="english">English</option>
-                        <option value="history">History</option>
-                        <option value="computer science">Computer Science</option>
-                    </select>
-            </div>
-            <hr class="blackline">
-        
-            <div class="barcontent">
-                <label for="description">
-                    <h2 style = "font-weight: bold;">
-                    Description:
-                    </h2>
-                    </label>
-                    <br>
-                    <input type="text" id="descriptionID" name="descriptionName" placeholder="Note Description...">
-            </div>
-            <hr class="blackline">
-
-            <div style="padding-left:10px;">
-                <label for="visibility">
-                    <h2 style = "font-weight: bold;">
-                    Visibility:
-                    </h2>
-                    <br>
-                    </label>
-            </div>
-        
-            <div style="padding-left:10px;">
-                <select id="visibilityID" name="visibilityName" style= padding-left:10px;>
-                        <option value="Public">Public</option>
-                        <option value="Private">Private</option>
-                </select>
-            </div>
-            <hr class="blackline">
+                <object id="change" class="pdf" 
+                data="https://mag.wcoomd.org/uploads/2018/05/blank.pdf"
+                width="800"
+                height="800">
+                </object>
+    
+                <div class="testbar">
+                    <div class="barcontent">
+                        <label for="title">
+                            <h2 style = "font-weight: bold;">
+                            Title:
+                            </h2>
+                            </label>
+                            <br>
+                            <input type="text" id="titleID" name="titlename" placeholder="Note title...">
+                    </div>
+                    <hr class="blackline">
+                    <div style="padding-left:10px;">
+                        <label for="courseNumber">
+                            <h2 style = "font-weight: bold;">
+                            Course:
+                            </h2>
+                            <br>
+                            </label>
+                    </div>
+                    
+                    <div style="padding-left:10px;">
+                        <!--change to dynamic values-->
+                        <select id="courseID" name="courseName" style= padding-left:10px;>
+                        {% for course in courses %}
+                            <option> {{course}}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                    <hr class="blackline">
+                    
+                <div class="barcontent">
+                    <label for="date">
+                        <h2 style = "font-weight: bold;">
+                        Date:
+                        <span id="dateID"></span></h2>
+                        </label>
+                        <br>
+                </div>
+                <hr class="blackline">
                 
-            <div class="barcontent">
-                <div class="publishButton">
-                    <button>Publish</button>
+                <div class="barcontent">
+                    <label for="tags">
+                        <h2 style = "font-weight: bold;">
+                        Tags:
+                        </h2>
+                        <br>
+                        </label>
+                        <select id="tag" name="tag">
+                        {% for tag in tags %}
+                            <option> {{tag}}</option>
+                        {% endfor %}
+                        </select>
+                </div>
+                <hr class="blackline">
+                
+                <div class="barcontent">
+                    <label for="description">
+                        <h2 style = "font-weight: bold;">
+                        Description:
+                        </h2>
+                        </label>
+                        <br>
+                        <input type="text" id="descriptionID" name="descriptionName" placeholder="Note Description...">
+                </div>
+                <hr class="blackline">
+    
+                <div style="padding-left:10px;">
+                    <label for="visibility">
+                        <h2 style = "font-weight: bold;">
+                        Visibility:
+                        </h2>
+                        <br>
+                        </label>
                 </div>
                 
-            </div> 
-    	    <hr class="blackline">
-        </div>
+                <div style="padding-left:10px;">
+                    <select id="visibilityID" name="visibilityName" style= padding-left:10px;>
+                            <option value="Public">Public</option>
+                            <option value="Private">Private</option>
+                    </select>
+                </div>
+                <hr class="blackline">
+                    
+                <div class="barcontent">
+                    <div class="publishButton">
+                        <button onclick = "publish()" type="submit" >Publish</button>
+                    </div>
+                    
+                </div> 
+                <hr class="blackline">
+                
+                <div class="note">
+                    <div class="uploadButton">
+                        <input type="file" name="pdf_file" accept="application/pdf" multiple="false" accept="application/pdf" id=finput onchange="upload()">    
+                    </div>        
+                </div>
+            </div>
+
+        </form>
 
 
 
-        <div class="note">
+        
 
-            <div class="uploadButton">
-                <button>Upload</button>
-            </div> 
-            
-        </div>
+        <script>
+            function publish(){
+                var noteTitle = document.getElementById("titleID").value;
+                var noteCourse = document.getElementById("courseID").value;
+                var noteDate = document.getElementById("dateID").innerHTML = m + "/" + d + "/" + y;
+                var noteTags = document.getElementById("tag").value;
+                var noteDescription = document.getElementById("descriptionID").value;
+                var noteVisibility = document.getElementById("visibilityID").value;
+                var noteLink = document.getElementById("finput").value;
 
+                alert("Title: " + noteTitle + "\nCourse: " + noteCourse + "\nDate: " + noteDate + "\nTags: " + noteTags + "\nDescription: " + noteDescription + "\nVisibility: " + noteVisibility + "\nLink: " + noteLink);
+
+            }
+
+            function date(){
+                n =  new Date();
+                y = n.getFullYear();
+                m = n.getMonth() + 1;
+                d = n.getDate();
+                document.getElementById("dateID").innerHTML = m + "/" + d + "/" + y;
+            }
+
+            function upload(){
+                var fileInput = document.getElementById("finput");
+                var file = fileInput.files[0]; // Get the first file from the input
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var pdfViewer = document.getElementById("change");
+                    pdfViewer.setAttribute("data", e.target.result); // Set the data attribute with the base64 data URL
+                };
+
+                reader.readAsDataURL(file); // Read the file as a data URL
+            }
+
+
+
+        </script>
     </body>
 </html>
