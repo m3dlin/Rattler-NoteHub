@@ -8,7 +8,7 @@ from utils.database import (get_course_nums, check_credentials, get_student_info
                             add_courses_to_user, Student, add_student_to_db, check_student_id, 
                             get_bookmarked_notes, get_course_notes, get_note_count, get_list_of_tags,
                             update_selected_note, delete_selected_note, Note, increment_upvotes,
-                            increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status, add_note_to_db)
+                            increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status, add_note_to_db,get_course_notes_with_tags)
 from utils.firebase import delete_file_from_firebase, upload_to_firebase
 from dotenv import load_dotenv
 import os
@@ -132,22 +132,29 @@ def submit_courses():
 
 
 # display course page
-@app.route("/<courseId>")
+@app.route("/<courseId>", methods=["GET", "POST"])
 def course_page(courseId):
     course_id = courseId
     course_details = get_course_details(course_id)
 
     course_notes = get_course_notes(course_id)
+
+    if request.method == "POST":
+        tag = request.form.get('tag')
+        course_notes = get_course_notes_with_tags(courseId=course_id,tag=tag)
+
+
     bookmark_status_list = []
 
     # Check bookmark status for each note
+    # this is to check what notes the user has already bookmarked, so the bookmark icon is filled in correctly
     for note in course_notes:
         is_bookmarked = check_bookmark_status(noteId=note.noteId, email=session['email'])
         bookmark_status_list.append(is_bookmarked)
 
     if course_details:
         return render_template('course-page.html', course_number=course_id, course=course_details, 
-                               note_count=get_note_count(course_id), notes=course_notes,bookmark_status_list=bookmark_status_list), 200
+                               note_count=get_note_count(course_id), notes=course_notes,bookmark_status_list=bookmark_status_list,tags=get_list_of_tags()), 200
     else:
         return 'Course not found', 404
     

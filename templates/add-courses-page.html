@@ -60,7 +60,7 @@
 
     <form id="courseForm" action="/submit_courses" method="POST" onsubmit="return showDone();">
         <label for="addCourses" style="font-size: 20px;">Select a Course:</label>
-        <select id="addCourses" name="addCourses" style="font-size: 18px; padding: 8px; margin-right: 10px;">
+        <select id="addCourses" name="addCourses" style="font-size: 13px; padding: 8px; margin-right: 10px;">
             {% for course in courses %}
                 <option value="{{ course}}">
                     {{ course }}
@@ -73,7 +73,7 @@
         <br><br>
     
         <label for="addedText" style="font-size: 20px;">Added:</label>
-        <select id="currentCourses" name="currentCourses" style="font-size: 18px; padding: 8px; margin-right: 10px;">
+        <select id="currentCourses" name="currentCourses" style="font-size: 13px; padding: 8px; margin-right: 10px;">
         </select>
         <button id="removeButton" onclick="removeCourse()" type="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" class="btn btn btn-light">
             Remove

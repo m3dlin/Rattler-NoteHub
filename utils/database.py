@@ -294,6 +294,40 @@ def get_course_notes(courseId):
                 notes_list.append(note)
     return notes_list
 
+def get_course_notes_with_tags(courseId, tag):
+    notes_list = []
+    with engine.connect() as conn:
+        if tag == "All Tags":
+            result = conn.execute(text("SELECT * FROM Note WHERE courseId = :course_id"), {'course_id': courseId})
+        else:
+            tag_id = get_tag_id(tagName=tag).tagId
+            result = conn.execute(text("SELECT Note.* FROM Note JOIN Note_Tags ON Note.noteId = Note_Tags.noteId WHERE Note.courseId = :course_id AND Note_Tags.tagId = :tag_id;"), 
+                {'course_id': courseId, 'tag_id':tag_id})
+
+        # collecting all the note objects and adding them to a list
+        for row in result.all():
+
+            # collecting only notes set to Public
+            if(row[6] == True):
+                # creating note object and inserting all information about the note
+                note = Note()
+                note.noteId = row[0]
+                note.courseId = row[1] 
+                note.title = row[2]
+                formatted_created_at = row[3].strftime('%B %d, %Y') # formatting the date to look cleaner to the user: Month day, year
+                note.created_at = formatted_created_at
+                note.description = row[4]
+                note.studentId = row[5]
+                note.visibility = row[6]
+                note.upvotes = row[7]
+                note.downvotes = row[8]
+                note.file_path = row[9]            
+                # adding note to the list of notes
+                notes_list.append(note)
+    return notes_list
+
+
+
 # get the total amount of notes for a specific course
 def get_note_count(courseId):
     result = session.execute(text("select count(*) as note_count from Note where courseId = :course_id and visibility = 1"),{'course_id': courseId}).fetchone()
@@ -464,12 +498,15 @@ def check_bookmark_status(noteId, email):
     else:
         return False
 
+
+
 """
 # testing
 if __name__ == '__main__': 
-    #add_note_to_db("https://firebasestorage.googleapis.com/v0/b/rattler-notehub.appspot.com/o/haiku.pdf_b44a4928-c6ce-4792-ba86-de6f7b868c88?alt=media")
-    #print(delete_bookmark(4, 'bgarza123@mail.stmarytx.edu'))
     print('test')
 
 """
+
+
+
 
