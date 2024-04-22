@@ -75,7 +75,7 @@
 
             </style>
         
-        <form id="noteForm" action="/submit_note" method="POST" enctype="multipart/form-data">
+        <form id="noteForm" action="/submit_note" method="POST" enctype="multipart/form-data" onsubmit="return publish()">
             <div style="display: flex">
 
                 <object id="change" class="pdf" 
@@ -175,7 +175,7 @@
                     
                 <div class="barcontent">
                     <div class="publishButton">
-                        <button onclick = "publish()" type="submit" >Publish</button>
+                        <button type="submit" >Publish</button>
                     </div>
                     
                 </div> 
@@ -198,8 +198,16 @@
                 var noteDescription = document.getElementById("descriptionID").value;
                 var noteVisibility = document.getElementById("visibilityID").value;
                 var noteLink = document.getElementById("finput").value;
-
-                alert("Title: " + noteTitle + "\nCourse: " + noteCourse + "\nDate: " + noteDate + "\nTags: " + noteTags + "\nDescription: " + noteDescription + "\nVisibility: " + noteVisibility + "\nLink: " + noteLink);
+                
+                // check if fields are left empty
+                if (noteTitle.trim() === '' || noteCourse.trim() === '' || noteDate.trim() === '' || noteTags.trim() === '' || noteDescription.trim() === ''|| noteVisibility.trim() === ''|| noteLink.trim() === '') {
+                    alert("Please fill in all fields.");
+                    return false; // prevent form submission
+                }
+                else{
+                    alert("Title: " + noteTitle + "\nCourse: " + noteCourse + "\nDate: " + noteDate + "\nTags: " + noteTags + "\nDescription: " + noteDescription + "\nVisibility: " + noteVisibility);
+                    return true; // form is ready for submission
+                }
 
             }
 
