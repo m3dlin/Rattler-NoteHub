@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
     <link rel="stylesheet" href="static/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <style>
         body{
         background: #395a7f;
@@ -23,16 +24,16 @@
             flex-direction: column; /* Center elements vertically */
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 200px; /* Adjusted margin to create space between title and content */
-        }
-
         #container {
             text-align: center;
         }
 
-        #tag {
+        #addCourses {
+            width: 200px; /* Adjusted width for the dropdown */
+            margin-bottom: 10px; /* Added margin to move it down */
+        }
+
+        #currentCourses {
             width: 200px; /* Adjusted width for the dropdown */
             margin-bottom: 10px; /* Added margin to move it down */
         }
@@ -47,33 +48,87 @@
     </style>
 </head>
 <body>
-    <h1>Add Courses</h1>
+    <div style="margin-bottom: 140px; text-align: center; margin-top: 130px;">
+        <h1 style="font-size: 36px; margin-bottom: 10px;">📚 Add Courses</h1>
+        <p style="font-size: 18px;">
+            Select all the courses you are currently in by clicking the dropdown and begin typing the course codes.<br>
+            When you select the <strong>add</strong> button, that course will be displayed on the added list.<br>
+            After you have selected all of your courses, press the <strong>submit</strong> button.
+        </p>
+    </div>
+    
 
-    <div id="container">
-        <label for="tag">Select a Course:</label>
-        <select id="tag" name="tag">
+    <form id="courseForm" action="/submit_courses" method="POST" onsubmit="return showDone();">
+        <label for="addCourses" style="font-size: 20px;">Select a Course:</label>
+        <select id="addCourses" name="addCourses" style="font-size: 13px; padding: 8px; margin-right: 10px;">
             {% for course in courses %}
                 <option value="{{ course}}">
                     {{ course }}
                 </option>
             {% endfor %}
         </select>
-
+        <button id="addButton" onclick="addCourse()" type="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" class="btn btn-light">
+            Add
+        </button>
         <br><br>
-
-        <label for="addedText">Added:</label>
-        <input type="text" id="addedText" name="addedText">
-
+    
+        <label for="addedText" style="font-size: 20px;">Added:</label>
+        <select id="currentCourses" name="currentCourses" style="font-size: 13px; padding: 8px; margin-right: 10px;">
+        </select>
+        <button id="removeButton" onclick="removeCourse()" type="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" class="btn btn btn-light">
+            Remove
+        </button>
         <br><br>
-
-        <button id="submitButton" onclick="showDone()">Submit</button>
-    </div>
+    
+        <input type="hidden" id="hiddenCourses" name="hiddenCourses">
+        <center><button id="submitButton" type="submit" style="--bs-btn-padding-y: .3rem; --bs-btn-padding-x: .55rem; --bs-btn-font-size: 1.25rem;" class="btn btn btn-light">
+            Submit
+        </button></center>
+    </form>
 
     <script>
-        function showDone() {
-            // You can add your logic here to handle the button click
-            alert("Submit button clicked!");
+        function removeCourse() {
+            var elementRemove = document.getElementById("currentCourses");
+            var selectedOption = elementRemove.options[elementRemove.selectedIndex];
+            
+            var elementAdd = document.getElementById("addCourses");
+            var option = document.createElement("option");
+            option.text = selectedOption.value;
+            elementAdd.add(option); // adding to addCourses list
+
+            elementRemove.remove(elementRemove.selectedIndex); // removing from CurrentCourses
         }
+
+        function addCourse() {
+            var elementSelect = document.getElementById("addCourses");
+            
+            var elementAdd = document.getElementById("currentCourses");
+            var option = document.createElement("option");
+            option.text = elementSelect[elementSelect.selectedIndex].value;
+            elementAdd.add(option); // adding to currentCourses list
+
+            elementSelect.remove(elementSelect.selectedIndex); // removing from addCourses
+        }
+
+        function showDone() {
+            var currentCoursesSelect = document.getElementById("currentCourses");
+            var currentCoursesList = [];
+
+            // loop through all options in currentCoursesSelect
+            for (var i = 0; i < currentCoursesSelect.options.length; i++) {
+                currentCoursesList.push(currentCoursesSelect.options[i].value);
+            }
+
+            // set hiddenCourses to the list of courses
+            document.getElementById("hiddenCourses").value = JSON.stringify(currentCoursesList); // Convert list to JSON string
+
+            alert("Selected Courses:\n" + currentCoursesList.join("\n"));
+            alert("Successfully submitted!");
+
+            // submit the form
+            document.getElementById("courseForm").submit();
+
+            }
     </script>
 </body>
 </html>

@@ -1,21 +1,31 @@
 <!-- Note Info Sidebar -->
 <div id="Note-Info-Sidebar" style="background-color: #f0f0f0; padding: 20px;">
     <h2>Title:</h2>
-    <p>{{ note_title }}</p>
+    <p>{{ note.title }}</p>
     <hr class="blackline">
 
     <h2>Date:</h2>
-    <p>{{ note_date }}</p>
+    <p>{{ note.created_at }}</p>
     <hr class="blackline">
 
     <h2>Tags:</h2>
-    <p>{{ note_tags }}</p>
+    <p>
+        {% for tag in tags %}
+            {{ tag }} 
+        {% endfor %}
+    </p>
     <hr class="blackline">
 
     <h2>Description:</h2>
-    <p>{{ note_description }}</p>
+    <p>{{ note.description }}</p>
     <hr class="blackline">
 
     <h2>Visibility:</h2>
-    <p>{{ note_visibility }}</p>
+    <p>
+        {% if note.visibility %}
+            <p>Public</p>
+        {% else %}
+            <p>Private</p>
+        {% endif %}
+    </p>
 </div>
