@@ -53,6 +53,7 @@ def logout():
     session.pop('email', None)
     return redirect(url_for('login'))
 
+  
 @app.route("/signup", endpoint='signup')
 def sign_up_page():
     return render_template('sign-up-page.html'), 200
@@ -90,6 +91,7 @@ def add_user():
 def home_page():
     if 'email' in session:
         student, courses = get_student_info(email=session['email'])
+
         course_details = []
 
         # Get details of each course for the logged-in student

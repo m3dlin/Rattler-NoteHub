@@ -4,6 +4,7 @@ The developer must create an .env file with the format stated in the README.md
 which contains the credientials of the DB.
 """
 
+
 from sqlalchemy import create_engine, text, Column, Integer, String, TIMESTAMP, Boolean
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -12,6 +13,7 @@ load_dotenv()
 import os
 import bcrypt
 import datetime
+
 # Reads credentials from the config file
 user = os.getenv('DB_USER')
 password = os.getenv('DB_PASSWORD')
@@ -37,6 +39,7 @@ Base = declarative_base()
 # used for getting database info with reflection
 # metadata = MetaData(bind=engine)
 # metadata.reflect()
+
 
 #########################################################################################################
 # classes used to connect to database
@@ -139,7 +142,9 @@ def check_credentials(email, password):
         session.close()
         return False
 
+
 # gets the student and courses they are enrolled for using the email logged into the session
+
 def get_student_info(email):
     session = Session()
     student = session.query(Student).filter_by(email=email).first() 
@@ -506,7 +511,5 @@ if __name__ == '__main__':
     print('test')
 
 """
-
-
 
 
