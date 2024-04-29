@@ -24,8 +24,8 @@
                     </div>
                     
                     <div class="col-md-6">
-                        <form class="d-flex">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <form class="d-flex" id="seachForm" onsubmit="submitSearch(event)">
+                            <input class="form-control me-2" type="search" placeholder="Search" name="query" id="searchQuery" aria-label="Search">
                             <button class="btn btn-outline-success" type="submit">Search</button>
                         </form>
                         
@@ -77,6 +77,32 @@
 
         }
 
+        function submitSearch(event) {
+        event.preventDefault();
+        var searchQuery = document.getElementById("searchQuery").value.trim().toLowerCase(); // getting the searched words and setting them to lowercase
+
+        // if the textbox is not blank, do the following
+        if (searchQuery !== "") {
+            var cardTitles = document.querySelectorAll('.card-title'); //get title of notes on the page
+            
+            // for each card, get the title. If the title includes what was in the query, then it should be displayed
+            cardTitles.forEach(function(titleElement) {
+                var card = titleElement.closest('.card');
+                var title = titleElement.textContent.trim().toLowerCase();
+                if (title.includes(searchQuery)) {
+                    card.style.display = 'block'; // show the card if the title matches the search query
+                } else {
+                    card.style.display = 'none'; // hide the card if the title does not match
+                }
+            });
+        } else {
+            // if search query is empty, show all cards
+            var cards = document.querySelectorAll('.card');
+            cards.forEach(function(card) {
+                card.style.display = 'block';
+            });
+        }
+    }
     </script>
 
 </html>
