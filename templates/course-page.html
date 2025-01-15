@@ -5,7 +5,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
         <link rel="stylesheet" href="static/styles.css">
         <title>{{course_number}}</title>
@@ -41,30 +42,53 @@
                             </select>
                         </form>
 
-
-                        
-                        
                     </div>
                 </div>
             </div>
         </div>
 
-        <!--Notes Section-->
-        <div id="My-Notes-Section">
-            {% set bookmark = True %}
-            <h2 style="padding-left: 20px;">Notes</h2>
-            <div class="container-fluid px-4">
-                <div class="row">
-                    {% with bookmark=bookmark %}
-                        {% for i in range(notes|length) %}
-                            {% set note = notes[i] %}
-                            {% set bookmarkStatus = bookmark_status_list[i] %}
-                            {% include 'note-card.html' %}
-                        {% endfor %}
-                    {% endwith %} 
-                </div>    
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true" style="font-size: 20px;">Notes</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false" style="font-size: 20px;">Discussion</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0" style="padding-top: 40px;">
+                <!--Notes Section-->
+                <div id="Notes-Section">
+                    {% set bookmark = True %}
+                    <div class="container-fluid px-4">
+                        <div class="row">
+                            {% with bookmark=bookmark %}
+                                {% for i in range(notes|length) %}
+                                    {% set note = notes[i] %}
+                                    {% set bookmarkStatus = bookmark_status_list[i] %}
+                                    {% include 'note-card.html' %}
+                                {% endfor %}
+                            {% endwith %} 
+                        </div>    
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0" style="padding-top: 40px;">
+                <!--Discussion Section-->
+                <div id="Discussion-Section">
+                    <div class="container-fluid px-4">
+                        <div class="row">
+                            {% for post in range(2) %}
+                                {% include 'discussion-post-card.html' %}
+                            {% endfor %}
+                        </div>
+                    </div>
             </div>
         </div>
+        
+        
 
 
     </body>

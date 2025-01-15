@@ -194,6 +194,9 @@ def submit_note():
 
 
 
+@app.route('/inbox', methods=['GET'])
+def inbox_page():
+    return render_template('inbox-page.html'), 200
 
 
 
