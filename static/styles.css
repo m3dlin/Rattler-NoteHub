@@ -5,6 +5,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700; /* Bold */
 }
 
+/* styling for note cards */
 .custom-border {
     border-color: #6e9fc1;
 }
@@ -12,7 +13,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color:#6e9fc1;
 }
 
-
+/* styling for sign in page buttons */
 #login-button {
   background-color: #395a7f;
 }
@@ -31,6 +32,23 @@ h1, h2, h3, h4, h5, h6 {
   color: #395a7f;
 }
 
+/* styling for inbox page */
+.inbox-container {
+  height: 100vh;
+}
+.inbox-list {
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+}
+.message-details {
+  overflow-y: auto;
+}
+.inbox-list .list-group-item {
+  cursor: pointer;
+}
+.inbox-list .list-group-item:hover {
+  background-color: #f8f9fa;
+}
 
 /* credits to the reference - https://wavier.art */
 .wave-container {  
