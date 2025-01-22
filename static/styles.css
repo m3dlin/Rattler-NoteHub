@@ -50,6 +50,34 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #f8f9fa;
 }
 
+/* styling for quiz page */
+.quiz-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+.question {
+  margin-bottom: 20px;
+}
+.options {
+  list-style-type: none;
+  padding: 0;
+}
+.options li {
+  margin-bottom: 10px;
+}
+.submit-btn, .next-btn, .back-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+}
+
 /* credits to the reference - https://wavier.art */
 .wave-container {  
     height: 40vh;

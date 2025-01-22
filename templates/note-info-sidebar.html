@@ -1,26 +1,31 @@
-
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true" style="font-size: 20px;">Note Info</button>
+      <button class="nav-link active" id="note-tab" data-bs-toggle="tab" data-bs-target="#note-tab-pane" type="button" role="tab" aria-controls="note-tab-pane" aria-selected="true" style="font-size: 15px;">Note Info</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false" style="font-size: 20px;">Comments</button>
+      <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments-tab-pane" type="button" role="tab" aria-controls="comments-tab-pane" aria-selected="false" style="font-size: 15px;">Comments</button>
     </li>
+
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="quiz-tab" data-bs-toggle="tab" data-bs-target="#quiz-tab-pane" type="button" role="tab" aria-controls="quiz-tab-pane" aria-selected="false" style="font-size: 15px;">Quiz</button>
+      </li>
 </ul>
 
 <div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0" style="padding-top: 40px;">
+    
+    <!--Note Info Section Tab-->
+    <div class="tab-pane fade show active" id="note-tab-pane" role="tabpanel" aria-labelledby="note-tab" tabindex="0" style="padding-top: 20px;">
         <!-- Note Info Sidebar -->
         <div id="Note-Info-Sidebar" style="background-color: #f0f0f0; padding: 20px;">
-            <h3>Title:</h3>
+            <h4>Title:</h4>
             <p>{{ note.title }}</p>
             <hr class="blackline">
 
-            <h3>Date:</h3>
+            <h4>Date:</h4>
             <p>{{ note.created_at }}</p>
             <hr class="blackline">
 
-            <h3>Tags:</h3>
+            <h4>Tags:</h4>
             <p>
                 {% for tag in tags %}
                     {{ tag }} 
@@ -28,11 +33,11 @@
             </p>
             <hr class="blackline">
 
-            <h3>Description:</h3>
+            <h4>Description:</h4>
             <p>{{ note.description }}</p>
             <hr class="blackline">
 
-            <h3>Visibility:</h3>
+            <h4>Visibility:</h4>
             <p>
                 {% if note.visibility %}
                     <p>Public</p>
@@ -43,16 +48,40 @@
         </div>
     </div>
 
-    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0" style="padding-top: 40px;">
-        <!--Discussion Section-->
-        <div id="Discussion-Section">
+    <!--Comments Section Tab-->
+    <div class="tab-pane fade" id="comments-tab-pane" role="tabpanel" aria-labelledby="comments-tab" tabindex="0" style="padding-top: 20px;">
+        
+        
+        <div id="Comments-Section">
             <div class="container-fluid px-4">
+                <!--submission section-->
+                
+                <!--comment section-->
                 <div class="row">
                     {% for post in range(2) %}
-                        {% include 'comment-card.html' %}
+                        <div class="comment-box">
+                            {% include 'comment-card.html' %}
+                        </div>
+                        
                     {% endfor %}
                 </div>
             </div>
+        </div>
+    </div>
+
+
+    <!--Quiz Section Tab-->
+    <div class="tab-pane fade" id="quiz-tab-pane" role="tabpanel" aria-labelledby="quiz-tab" tabindex="0" style="padding-top: 20px;">
+        <div id="Quiz-Section" style="text-align: center;">
+            
+            <h4>Quiz</h4>
+            <p>
+                Rattler NoteHub now has the capability to analyze student's notes and produce quizzes to help study the current note. 
+                This feature uses .... to identify key concepts and generate relevant questions, making it easier for students to review and retain information.
+            </p>
+            
+            <button type="button" class="btn btn-primary" style="margin-top: 20px; color: white; background-color: #395a7f;">Generate Quiz</button>
+
         </div>
     </div>
 </div>

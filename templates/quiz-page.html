@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link rel="stylesheet" href="static/styles.css">
+    <title>Quiz Page</title>
+</head>
+
+<body>
+    <!--header-->
+    {% include 'header.html' %}
+    
+    <div class="quiz-container" style="margin-top: 60px; margin-bottom: 60px;">
+        <h1 style="text-align: center;"> *Note Name* Quiz</h1>
+        <div class="progress" style="height: 20px; margin-bottom: 20px;">
+            <div class="progress-bar" role="progressbar" style="width: 0%;" id="progress-bar"></div>
+        </div>
+        <div class="question" id="question-container">
+            <!-- Questions will be dynamically inserted here -->
+        </div>
+        <div style="text-align: center;">
+            <button class="back-btn" id="back-btn" style="color: white; background-color: #395a7f;">Back</button>
+            <button class="next-btn" id="next-btn" style="color: white; background-color: #395a7f;">Next</button>
+            <button class="submit-btn" id="submit-btn" style="color: white; background-color: #395a7f; display: none;">Submit</button>
+        </div>
+        <div id="result-container" style="display: none; text-align: center; margin-top: 20px;">
+            <h2>Quiz Results</h2>
+            <p id="result-text"></p>
+            <div id="detailed-results"></div>
+            <!--Buttons to retake or go back to note NEED TO DO THE HREF-->
+            <div style="text-align: center;">
+            <a href="/quiz" class="btn" style="color: white; background-color: #395a7f; margin-right: 20px;">Retake</a>
+            <a class="btn" style="color: white; background-color: #395a7f;">Back to Note</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What is 45 - 3?",
+                options: ["A. 42", "B. 41", "C. 40", "D. 39"],
+                answer: "a"
+            },
+            {
+                question: "What is 2 + 2?",
+                options: ["A. 3", "B. 4", "C. 5", "D. 6"],
+                answer: "b"
+            },
+            {
+                question: "What is 5 * 5?",
+                options: ["A. 20", "B. 25", "C. 30", "D. 35"],
+                answer: "b"
+            },
+            {
+                question: "What is 10 / 2?",
+                options: ["A. 2", "B. 3", "C. 4", "D. 5"],
+                answer: "c"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const userAnswers = new Array(questions.length).fill(null);
+
+        function showQuestion(index) {
+            const questionContainer = document.getElementById('question-container');
+            questionContainer.innerHTML = `
+                <p>${index + 1}. ${questions[index].question}</p>
+                <ul class="options">
+                    ${questions[index].options.map((option, i) => `
+                        <div class="card" style="margin-bottom:10px; padding: 10px;"> 
+                        <li><input type="radio" name="q${index}" value="${String.fromCharCode(97 + i)}" ${userAnswers[index] === String.fromCharCode(97 + i) ? 'checked' : ''}> ${option}</li>
+                        </div>
+                    `).join('')}
+                </ul>
+            `;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progress-bar');
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressBar.innerText = `${currentQuestionIndex + 1}/${questions.length}`;
+        }
+
+        function updateButtons() {
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function calculateScore() {
+            score = 0;
+            questions.forEach((question, index) => {
+                if (userAnswers[index] === question.answer) {
+                    score++;
+                }
+            });
+        }
+
+        function showResults() {
+            const detailedResults = document.getElementById('detailed-results');
+            detailedResults.innerHTML = questions.map((question, index) => `
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <p><strong>${index + 1}. ${question.question}</strong></p>
+                    <p>Your answer: ${userAnswers[index] ? question.options[userAnswers[index].charCodeAt(0) - 97] : 'No answer'}</p>
+                    <p>Correct answer: ${question.options[question.answer.charCodeAt(0) - 97]}</p>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            const selectedOption = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                userAnswers[currentQuestionIndex] = selectedOption.value;
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+                updateProgressBar();
+                updateButtons();
+            }
+        });
+
+        document.getElementById('back-btn').addEventListener('click', () => {
+            const selectedOption = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                userAnswers[currentQuestionIndex] = selectedOption.value;
+            }
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion(currentQuestionIndex);
+                updateProgressBar();
+                updateButtons();
+            }
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            const selectedOption = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                userAnswers[currentQuestionIndex] = selectedOption.value;
+            }
+            calculateScore();
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('back-btn').style.display = 'none';
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('result-text').innerText = `You scored ${score} out of ${questions.length}`;
+            showResults();
+        });
+
+        // Initialize the first question and progress bar
+        showQuestion(currentQuestionIndex);
+        updateProgressBar();
+        updateButtons();
+    </script>
+</body>
+</html>

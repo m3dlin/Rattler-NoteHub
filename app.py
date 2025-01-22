@@ -199,8 +199,10 @@ def inbox_page():
     return render_template('inbox-page.html'), 200
 
 
-
-
+# FUTURE - 'quiz<noteId>' route to be implemented
+@app.route('/quiz', methods=['GET'])
+def quiz_page():
+    return render_template('quiz-page.html'), 200
 
 
 
