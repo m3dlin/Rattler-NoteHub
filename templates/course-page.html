@@ -80,11 +80,24 @@
                 <div id="Discussion-Section">
                     <div class="container-fluid px-4">
                         <div class="row">
+                            <!-- New Discussion Post Form -->
+                            <form id="discussionForm" action="/{{ course.id }}" method="POST" style="margin-bottom: 20px;">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="discussionTitle" name="discussionTitle" placeholder="Title of your post">
+                                </div>
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="discussionMessage" name="discussionMessage" rows="3" placeholder="Start your discussion post here..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-outline-secondary">Submit</button>
+                            </form>
+                        </div>
+                        <div class="row">
                             {% for post in range(2) %}
                                 {% include 'discussion-post-card.html' %}
                             {% endfor %}
                         </div>
                     </div>
+                </div>
             </div>
         </div>
         

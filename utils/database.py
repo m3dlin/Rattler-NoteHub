@@ -100,6 +100,14 @@ class Bookmark(Base):
     noteId = Column(Integer)
     studentId = Column(Integer)
 
+class Discussion_Post(Base):
+    __tablename__ = "Discussion_Post"
+    dp_id = Column(Integer, primary_key=True)
+    course_id = Column(String(255))
+    student_id = Column(Integer)
+    title = Column(String(255))
+    message = Column(String(1000))
+
 #########################################################################################################
 
 # function used in stmu_scraper.py
@@ -503,12 +511,38 @@ def check_bookmark_status(noteId, email):
     else:
         return False
 
+def add_discussion_post(course_id, student_id, title, message):
+    new_post = Discussion_Post(
+        course_id=course_id,
+        student_id=student_id,
+        title=title,
+        message=message
+    )
+    session.add(new_post)
+    session.commit()
+    return True
 
+def get_discussion_posts(course_id):
+    posts = session.query(Discussion_Post).filter_by(course_id=course_id).all()
+    return posts
 
 """
 # testing
-if __name__ == '__main__': 
-    print('test')
+if __name__ == '__main__':
+    # Test get_discussion_posts function
+    course_id = 'CS101'
+    posts = get_discussion_posts(course_id)
+    for post in posts:
+        print(f"Title: {post.title}, Message: {post.message}")
+
+    # Test add_discussion_post function
+    student_id = 1  # Replace with a valid student ID
+    title = "Test Discussion Post"
+    message = "This is a test discussion post."
+    if add_discussion_post(course_id, student_id, title, message):
+        print("Discussion post added successfully!")
+    else:
+        print("Failed to add discussion post.")
 
 """
 
