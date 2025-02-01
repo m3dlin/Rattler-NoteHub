@@ -78,6 +78,21 @@ h1, h2, h3, h4, h5, h6 {
   margin: 10px;
 }
 
+/* styling for note info sidebar on note page */
+#Note-Info-Sidebar {
+  background-color: #f0f0f0;
+  padding: 20px;
+  position: sticky;
+  top: 20px; /* Keeps it at the top of the viewport when scrolling */
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.sidebar {
+  max-height: 600px; /* Adjust the height as needed */
+  overflow-y: auto;
+}
+
 /* credits to the reference - https://wavier.art */
 .wave-container {  
     height: 40vh;
