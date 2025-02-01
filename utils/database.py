@@ -108,6 +108,9 @@ class Discussion_Post(Base):
     title = Column(String(255))
     message = Column(String(1000))
 
+    def get_student_name(self):
+        return get_student_name(self.student_id) 
+
 #########################################################################################################
 
 # function used in stmu_scraper.py
@@ -523,27 +526,28 @@ def add_discussion_post(course_id, student_id, title, message):
     return True
 
 def get_discussion_posts(course_id):
-    posts = session.query(Discussion_Post).filter_by(course_id=course_id).all()
-    return posts
+    posts_list = []
+
+    with engine.connect() as conn:
+        result = conn.execute(text(f"SELECT * FROM Discussion_Post WHERE course_id = :course_id"), {'course_id': course_id})
+        
+        # collecting all post objects and adding them to a list
+        for row in result.all():
+            post = Discussion_Post()
+            post.dp_id = row[0]
+            post.course_id = row[1]
+            post.student_id = row[2]
+            post.title = row[3]
+            post.message = row[4]
+            posts_list.append(post)
+    return posts_list
+
+
 
 """
 # testing
 if __name__ == '__main__':
-    # Test get_discussion_posts function
-    course_id = 'CS101'
-    posts = get_discussion_posts(course_id)
-    for post in posts:
-        print(f"Title: {post.title}, Message: {post.message}")
-
-    # Test add_discussion_post function
-    student_id = 1  # Replace with a valid student ID
-    title = "Test Discussion Post"
-    message = "This is a test discussion post."
-    if add_discussion_post(course_id, student_id, title, message):
-        print("Discussion post added successfully!")
-    else:
-        print("Failed to add discussion post.")
-
+    
 """
 
 

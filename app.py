@@ -9,7 +9,7 @@ from utils.database import (get_course_nums, check_credentials, get_student_info
                             get_bookmarked_notes, get_course_notes, get_note_count, get_list_of_tags,
                             update_selected_note, delete_selected_note, Note, increment_upvotes,
                             increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status, add_note_to_db,get_course_notes_with_tags,
-                            add_discussion_post)
+                            add_discussion_post, get_discussion_posts)
 from utils.firebase import delete_file_from_firebase, upload_to_firebase
 from dotenv import load_dotenv
 import os
@@ -140,6 +140,7 @@ def course_page(courseId):
     course_id = courseId
     course_details = get_course_details(course_id)
     course_notes = get_course_notes(course_id)
+    discussion_posts = get_discussion_posts(course_id)
 
     if request.method == "POST":
         if 'tag' in request.form:
@@ -149,7 +150,7 @@ def course_page(courseId):
             discussion_title = request.form.get('discussionTitle')
             discussion_message = request.form.get('discussionMessage')
             add_discussion_post(course_id, get_student_id(session['email']),discussion_title, discussion_message)
-            flash('Discussion post submitted successfully!', 'success')
+            return redirect(url_for('course_page', courseId=course_id))
 
     bookmark_status_list = []
 
@@ -161,7 +162,9 @@ def course_page(courseId):
 
     if course_details:
         return render_template('course-page.html', course_number=course_id, course=course_details, 
-                               note_count=get_note_count(course_id), notes=course_notes,bookmark_status_list=bookmark_status_list,tags=get_list_of_tags()), 200
+                               note_count=get_note_count(course_id), notes=course_notes,
+                               bookmark_status_list=bookmark_status_list,tags=get_list_of_tags(), 
+                               discussion_posts=discussion_posts), 200
     else:
         return 'Course not found', 404
     
