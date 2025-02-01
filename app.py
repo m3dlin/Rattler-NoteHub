@@ -141,7 +141,7 @@ def course_page(courseId):
     course_details = get_course_details(course_id)
     course_notes = get_course_notes(course_id)
     discussion_posts = get_discussion_posts(course_id)
-
+    
     if request.method == "POST":
         if 'tag' in request.form:
             tag = request.form.get('tag')

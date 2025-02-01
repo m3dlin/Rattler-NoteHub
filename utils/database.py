@@ -111,6 +111,22 @@ class Discussion_Post(Base):
     def get_student_name(self):
         return get_student_name(self.student_id) 
 
+    def get_comments_on_post(self):
+        return get_comments_on_post(self.dp_id)
+    
+class Comment(Base):
+    __tablename__ = "Comment"
+    comment_id = Column(Integer, primary_key=True)
+    student_id = Column(Integer)
+    dp_id = Column(Integer)
+    message = Column(String(1000))
+
+    def get_student_name(self):
+        return get_student_name(self.student_id) 
+    
+
+
+
 #########################################################################################################
 
 # function used in stmu_scraper.py
@@ -541,6 +557,22 @@ def get_discussion_posts(course_id):
             post.message = row[4]
             posts_list.append(post)
     return posts_list
+
+def get_comments_on_post(dp_id):
+    comments_list = []
+
+    with engine.connect() as conn:
+        result = conn.execute(text(f"SELECT * FROM Comment WHERE dp_id = :dp_id"), {'dp_id': dp_id})
+        
+        # collecting all comment objects and adding them to a list
+        for row in result.all():
+            comment = Comment()
+            comment.comment_id = row[0]
+            comment.student_id = row[1]
+            comment.dp_id = row[2]
+            comment.message = row[3]
+            comments_list.append(comment)
+    return comments_list
 
 
 
