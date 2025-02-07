@@ -1,22 +1,20 @@
 # Rattler-NoteHub
-CS3340 Project + CS
+CS3340 Project + CS4395 Senior Project
 
-**summary of project goes here**
-
+## Summary 
+Rattler NoteHub is a platform that allows St. Mary’s students to post notes for various classes in PDF format. This platform allows users to upload PDF files related to their courses and then add descriptions and tags to them. The system acts as a central repository for organizing and managing course materials, thereby improving students' learning outcomes. To use the website's features, users must create an account. After logging in, users can access their dashboard or course-specific pages to upload PDF files for their classes. The system allows users to store and manage multiple PDF documents, which they can categorize based on their courses. The system may also include features that improve the note-taking process, such as the ability to search for specific keywords from the note’s title and organize notes by topic or date. Other capabilities of the platform will include discussion boards for notes being posted, note annotations for other students to view, study tools such as a quiz generator based on the note uploaded, and a better user interface for navigating.
 ## Installation
 
-1. Clone the repository using
+1. Navigate to desired folder and clone the project's repository using
 ```sh
 git clone https://github.com/m3dlin/Rattler-NoteHub.git
 ```
 
-2. Install all dependencies
+2. Install all dependencies needed for the project to run
 ```sh
 pip install -r requirements.txt
 ```
 ## Usage
-
- **functionality, how to use project goes here**
  
 
 Run the app in development mode using
@@ -54,5 +52,5 @@ Example `.json` structure:
     "private_key_id": "key",
     "private_key": "private_key",
     "universe_domain": "googleapis.com"
-  }
+}
 ```
