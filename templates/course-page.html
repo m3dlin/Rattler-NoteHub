@@ -81,7 +81,7 @@
                     <div class="container-fluid px-4">
                         <div class="row">
                             <!-- New Discussion Post Form -->
-                            <form id="discussionForm" action="/{{ course.id }}" method="POST" style="margin-bottom: 20px;">
+                            <form onsubmit="return validateDiscussionPostForm()" id="discussionForm" action="/{{ course.id }}" method="POST" style="margin-bottom: 20px;">
                                 <div class="mb-3">
                                     <input type="text" class="form-control" id="discussionTitle" name="discussionTitle" placeholder="Title of your post">
                                 </div>
@@ -140,6 +140,17 @@
             });
         }
     }
+
+    function validateDiscussionPostForm(){
+        var title = document.getElementById("discussionTitle").value;
+        var message = document.getElementById("discussionMessage").value;
+        if (title === "" || message === "") {
+            alert("Title and message must be filled out");
+            return false;
+        }
+        return true;
+    }
+
     </script>
 
 </html>

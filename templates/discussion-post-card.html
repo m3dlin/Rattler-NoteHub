@@ -26,9 +26,9 @@
                 <div class="collapse" id="collapse{{ post.dp_id }}">
 
                     <!-- comment form -->
-                    <form action="/{{ course.id }}" method="POST" class="d-flex align-items-center gap-2" style="margin-top: 10px;">
+                    <form onsubmit="return validateCommentForm()" action="/{{ course.id }}" method="POST" class="d-flex align-items-center gap-2" style="margin-top: 10px;">
                         <input type="hidden" name="discussionPostID" value="{{ post.dp_id }}">                
-                        <textarea class="form-control" id="commentMessage" name="commentMessage" rows="1" placeholder="Write a comment..." style="resize: none;"></textarea>
+                        <textarea class="form-control" id="commentMessage" name="commentMessage{{ post.dp_id }}" rows="1" placeholder="Write a comment..." style="resize: none;"></textarea>
                         <button type="submit" class="btn btn-sm btn-outline-secondary">Submit</button>
                     </form>
 
@@ -49,3 +49,15 @@
     </div>
 
 </div>
+
+<script>
+        function validateCommentForm(){
+        var message = document.getElementById("commentMessage{{ post.dp_id }}");
+
+        if(message === "test"){
+            alert("Comment must be filled out");
+            return false;
+        }
+        return true;
+    }
+</script>
