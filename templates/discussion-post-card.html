@@ -4,31 +4,24 @@
 
             <!--user who made the post and the discussion topic-->
             <div class="col-6">
-                
                 <p id="Username">Created By: {{post.get_student_name()}}</p>
-
                 <h4 class="card-title">{{post.title}}</h4>
                 <br>
                 <p id="message">{{post.message}}</p>
-
-            
-
+                
                 <!--number of comments and link to see comments dropdown-->
                 <p class="d-inline-flex gap-1">
                     <a class="btn btn-outline-secondary" data-bs-toggle="collapse" href="#collapse{{post.dp_id}}" role="button" aria-expanded="false" aria-controls="collapseExample">
                     {{post.get_comments_on_post() | length}} Comments
                     </a>
                 </p>
-
                 
-
-                <!-- Collapsible section for comments and form -->
+                <!-- collapsible section for comments and form -->
                 <div class="collapse" id="collapse{{ post.dp_id }}">
-
                     <!-- comment form -->
-                    <form onsubmit="return validateCommentForm()" action="/{{ course.id }}" method="POST" class="d-flex align-items-center gap-2" style="margin-top: 10px;">
+                    <form onsubmit="return validateCommentForm(this)" action="/{{ course.id }}" method="POST" class="d-flex align-items-center gap-2" style="margin-top: 10px;">
                         <input type="hidden" name="discussionPostID" value="{{ post.dp_id }}">                
-                        <textarea class="form-control" id="commentMessage" name="commentMessage{{ post.dp_id }}" rows="1" placeholder="Write a comment..." style="resize: none;"></textarea>
+                        <textarea class="form-control" name="commentMessage{{ post.dp_id }}" rows="1" placeholder="Write a comment..." style="resize: none;"></textarea>
                         <button type="submit" class="btn btn-sm btn-outline-secondary">Submit</button>
                     </form>
 
@@ -38,26 +31,23 @@
                             {{ comment.message }} - {{ comment.get_student_name() }}
                         </div>
                     {% endfor %}
-                    
                 </div> 
-
-
-
             </div>
-            
         </div>
     </div>
-
 </div>
 
 <script>
-        function validateCommentForm(){
-        var message = document.getElementById("commentMessage{{ post.dp_id }}");
+    function validateCommentForm(form) {
+        
+        // must use query selector because the id is unique for each comment section (based on post id)
+        var message = form.querySelector("textarea").value;
 
-        if(message === "test"){
+        if (message.trim() === "") {
             alert("Comment must be filled out");
             return false;
         }
+
         return true;
     }
 </script>

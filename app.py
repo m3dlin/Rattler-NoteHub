@@ -9,7 +9,7 @@ from utils.database import (get_course_nums, check_credentials, get_student_info
                             get_bookmarked_notes, get_course_notes, get_note_count, get_list_of_tags,
                             update_selected_note, delete_selected_note, Note, increment_upvotes,
                             increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status, add_note_to_db,get_course_notes_with_tags,
-                            add_discussion_post, get_discussion_posts)
+                            add_discussion_post, get_discussion_posts, add_comment_to_post)
 from utils.firebase import delete_file_from_firebase, upload_to_firebase
 from dotenv import load_dotenv
 import os
@@ -143,15 +143,23 @@ def course_page(courseId):
     discussion_posts = get_discussion_posts(course_id)
     
     if request.method == "POST":
+        # if user is searching for tags
         if 'tag' in request.form:
             tag = request.form.get('tag')
             course_notes = get_course_notes_with_tags(courseId=course_id, tag=tag)
+        # if user is creating a new discussion post
         elif 'discussionTitle' in request.form and 'discussionMessage' in request.form:
             discussion_title = request.form.get('discussionTitle')
             discussion_message = request.form.get('discussionMessage')
             add_discussion_post(course_id, get_student_id(session['email']),discussion_title, discussion_message)
             return redirect(url_for('course_page', courseId=course_id))
-
+        # if user is creating a new comment on a discussion post
+        elif 'discussionPostID' in request.form:
+            discussion_post_id = request.form.get('discussionPostID')
+            comment_message = request.form.get(f'commentMessage{discussion_post_id}')
+            if comment_message:
+                add_comment_to_post(discussion_post_id, get_student_id(session['email']), comment_message)
+                return redirect(url_for('course_page', courseId=course_id))
     bookmark_status_list = []
 
     # Check bookmark status for each note

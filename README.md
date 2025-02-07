@@ -1,5 +1,5 @@
 # Rattler-NoteHub
-CS3340 Project
+CS3340 Project + CS
 
 **summary of project goes here**
 
@@ -33,7 +33,9 @@ To access user and password credentials for the database connection in this proj
 - Ensure you have the necessary permissions and access rights to use the database.
 
 #### Configuration File
-IMPORTANT: To be able to work locally on a development server, you must add the database credentials into a .env file within root of project. Here's a template below -
+IMPORTANT: To be able to work locally on a development server, you must add the database credentials and firebase credentials into a .env file and .json file respectively within root of project. 
+
+Here's a template below -
 
 Example `.env` structure:
 ```env
@@ -42,4 +44,15 @@ DB_PASSWORD=your_password
 DB_HOST=your_host
 DB_NAME=your_database_name
 SECRET_KEY=your_secret_key
+```
+
+Example `.json` structure:
+```env
+{
+    "type": "account_type",
+    "project_id": "project_id",
+    "private_key_id": "key",
+    "private_key": "private_key",
+    "universe_domain": "googleapis.com"
+  }
 ```

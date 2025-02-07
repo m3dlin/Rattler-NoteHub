@@ -574,12 +574,23 @@ def get_comments_on_post(dp_id):
             comments_list.append(comment)
     return comments_list
 
-
+def add_comment_to_post(dp_id, student_id, message):
+    new_comment = Comment(
+        dp_id=dp_id,
+        student_id=student_id,
+        message=message
+    )
+    session.add(new_comment)
+    session.commit()
+    return True
 
 """
 # testing
 if __name__ == '__main__':
-    
 """
+
+
+    
+
 
 
