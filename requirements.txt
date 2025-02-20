@@ -10,3 +10,4 @@ bcrypt
 pymysql
 firebase-admin
 gunicorn
+pypdf
