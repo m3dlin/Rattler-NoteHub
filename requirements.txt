@@ -11,3 +11,4 @@ pymysql
 firebase-admin
 gunicorn
 pypdf
+nltk
