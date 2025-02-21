@@ -6,86 +6,73 @@
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments-tab-pane" type="button" role="tab" aria-controls="comments-tab-pane" aria-selected="false" style="font-size: 15px;">Comments</button>
         </li>
-    
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="quiz-tab" data-bs-toggle="tab" data-bs-target="#quiz-tab-pane" type="button" role="tab" aria-controls="quiz-tab-pane" aria-selected="false" style="font-size: 15px;">Quiz</button>
-          </li>
+        </li>
     </ul>
     
     <div class="tab-content" id="myTabContent">
-        
-        <!--Note Info Section Tab-->
         <div class="tab-pane fade show active" id="note-tab-pane" role="tabpanel" aria-labelledby="note-tab" tabindex="0" style="padding-top: 20px;">
-            <!-- Note Info Sidebar -->
             <div id="Note-Info-Sidebar">
                 <h4>Title:</h4>
                 <p>{{ note.title }}</p>
                 <hr class="blackline">
-    
                 <h4>Date:</h4>
                 <p>{{ note.created_at }}</p>
                 <hr class="blackline">
-    
                 <h4>Tags:</h4>
-                <p>
-                    {% for tag in tags %}
-                        {{ tag }} 
-                    {% endfor %}
-                </p>
+                <p>{% for tag in tags %}{{ tag }} {% endfor %}</p>
                 <hr class="blackline">
-    
                 <h4>Description:</h4>
                 <p>{{ note.description }}</p>
                 <hr class="blackline">
-    
                 <h4>Visibility:</h4>
-                <p>
-                    {% if note.visibility %}
-                        <p>Public</p>
-                    {% else %}
-                        <p>Private</p>
-                    {% endif %}
-                </p>
+                <p>{% if note.visibility %} Public {% else %} Private {% endif %}</p>
             </div>
         </div>
-    
-        <!--Comments Section Tab-->
+
         <div class="tab-pane fade" id="comments-tab-pane" role="tabpanel" aria-labelledby="comments-tab" tabindex="0" style="padding-top: 20px;">
-            
-            
             <div id="Comments-Section">
-                <div class="container-fluid px-4">
-                    <!--submission section-->
-                    
-                    <!--comment section-->
+                <div class="container-fluid px-4 d-flex flex-column" style="width: 100%;">
+                    <form onsubmit="return validateCommentForm()" id="commentForm" action="/viewnote{{ note.noteId }}" method="POST" style="margin-bottom: 20px;">
+                        <div class="mb-3">
+                            <textarea class="form-control" id="commentMessage" name="commentMessage" rows="5" placeholder="Write your comment..." style="height: 150px;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-outline-secondary">Submit</button>
+                    </form>
                     <div class="d-flex flex-column" style="width: 100%;">
-                        {% for post in range(10) %}
+                        {% for comment in comments %}
                             <div class="comment-box">
                                 {% include 'comment-card.html' %}
                             </div>
-                            
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
-    
-    
-        <!--Quiz Section Tab-->
+
         <div class="tab-pane fade" id="quiz-tab-pane" role="tabpanel" aria-labelledby="quiz-tab" tabindex="0" style="padding-top: 20px;">
             <div id="Quiz-Section" style="text-align: center;">
-                
                 <h4>Quiz</h4>
                 <p>
                     Rattler NoteHub now has the capability to analyze student's notes and produce quizzes to help study the current note. 
                     This feature uses .... to identify key concepts and generate relevant questions, making it easier for students to review and retain information.
                 </p>
-                
                 <a href="/quiz">
                     <button type="button" class="btn btn-primary" style="margin-top: 20px; color: white; background-color: #395a7f;">Generate Quiz</button>
                 </a>
-    
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function validateCommentForm(){
+        var message = document.getElementById("commentMessage").value;
+        if (message === "") {
+            alert("Comment must be filled out");
+            return false;
+        }
+        return true;
+    }
+</script>

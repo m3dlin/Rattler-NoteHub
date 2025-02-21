@@ -120,6 +120,7 @@ class Comment(Base):
     student_id = Column(Integer)
     dp_id = Column(Integer)
     message = Column(String(1000))
+    note_id = Column(Integer)
 
     def get_student_name(self):
         return get_student_name(self.student_id) 
@@ -584,10 +585,36 @@ def add_comment_to_post(dp_id, student_id, message):
     session.commit()
     return True
 
-"""
+def get_comment_from_note(note_id):
+    comments_list = []
+    with engine.connect() as conn:
+        result = conn.execute(text(f"SELECT * FROM Comment WHERE note_id = :note_id"), {'note_id': note_id})
+        
+        # collecting all comment objects and adding them to a list
+        for row in result.all():
+            comment = Comment()
+            comment.comment_id = row[0]
+            comment.student_id = row[1]
+            comment.note_id = row[2]
+            comment.message = row[3]
+            comments_list.append(comment)
+    return comments_list
+
+def add_comment_to_note(note_id, student_id, message):
+    new_comment = Comment(
+        note_id=note_id,
+        student_id=student_id,
+        message=message
+    )
+    session.add(new_comment)
+    session.commit()
+    return True
+
+
 # testing
 if __name__ == '__main__':
-"""
+    print(get_comment_from_note(6))
+
 
 
     
