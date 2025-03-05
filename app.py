@@ -10,7 +10,7 @@ from utils.database import (get_course_nums, check_credentials, get_student_info
                             update_selected_note, delete_selected_note, Note, increment_upvotes,
                             increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status, 
                             add_note_to_db,get_course_notes_with_tags, add_discussion_post, get_discussion_posts,
-                            add_comment_to_post, get_comment_from_note, add_comment_to_note)
+                            add_comment_to_post, get_comment_from_note, add_comment_to_note, get_notifications)
 from utils.firebase import delete_file_from_firebase, upload_to_firebase
 from dotenv import load_dotenv
 import os
@@ -213,7 +213,10 @@ def submit_note():
 
 @app.route('/inbox', methods=['GET'])
 def inbox_page():
-    return render_template('inbox-page.html'), 200
+
+    notifications = get_notifications(get_student_id(session['email']))
+
+    return render_template('inbox-page.html', notifications=notifications), 200
 
 
 # FUTURE - 'quiz<noteId>' route to be implemented

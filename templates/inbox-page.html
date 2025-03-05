@@ -25,29 +25,10 @@
                     <div class="list-group" id="inboxList">
                         
                         <!-- messages -->
-                        <a class="list-group-item list-group-item-action" data-title="CS3300 Post Reply" data-message=":3 replied with: blah blah blah." data-sender=":3" data-time="5 mins ago">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">CS3300 Post Reply</h5>
-                                <small>5 mins ago</small>
-                            </div>
-                            <p class="mb-1 text-muted">:3 replied to your post</p>
-                        </a>
 
-                        <a class="list-group-item list-group-item-action" data-title="CS3300 Post Reply" data-message=">:3 replied with: blah blah blah. I think this note looks good." data-sender=">:3" data-time="3 hours ago">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">EN1311 Note Comment</h5>
-                                <small>3 hours ago</small>
-                            </div>
-                            <p class="mb-1 text-muted"> >:3 replied to your post</p>
-                        </a>
-
-                        <a class="list-group-item list-group-item-action" data-title="Course Notification" data-message="Your course schedule has been updated." data-sender="Rattler NoteHub" data-time="2 days ago">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">Course Notification</h5>
-                                <small>2 days ago</small>
-                            </div>
-                            <p class="mb-1 text-muted">Your course schedule has been updated.</p>
-                        </a>
+                        {% for notification in notifications %}
+                            {% include 'notification-message-item.html' %}
+                        {% endfor %}
 
                     </div>
                 </div>

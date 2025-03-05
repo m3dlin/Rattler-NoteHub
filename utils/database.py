@@ -121,11 +121,20 @@ class Comment(Base):
     dp_id = Column(Integer)
     message = Column(String(1000))
     note_id = Column(Integer)
+    created_at = Column(TIMESTAMP)
 
     def get_student_name(self):
         return get_student_name(self.student_id) 
+    def get_message(self):
+        return self.message
     
-
+class Notification(Base):
+    __tablename__ = "Notification"
+    notification_id = Column(Integer, primary_key=True)
+    student_id = Column(Integer)
+    title = Column(String(255))
+    message = Column(String(255))
+    created_at = Column(TIMESTAMP)
 
 
 #########################################################################################################
@@ -559,6 +568,10 @@ def get_discussion_posts(course_id):
             posts_list.append(post)
     return posts_list
 
+def get_discussion_post(dp_id):
+    post = session.query(Discussion_Post).filter_by(dp_id=dp_id).first()
+    return post
+
 def get_comments_on_post(dp_id):
     comments_list = []
 
@@ -572,6 +585,7 @@ def get_comments_on_post(dp_id):
             comment.student_id = row[1]
             comment.dp_id = row[2]
             comment.message = row[3]
+            comment.created_at = row[4]
             comments_list.append(comment)
     return comments_list
 
@@ -579,10 +593,22 @@ def add_comment_to_post(dp_id, student_id, message):
     new_comment = Comment(
         dp_id=dp_id,
         student_id=student_id,
-        message=message
+        message=message,
+        created_at=datetime.datetime.now()
     )
     session.add(new_comment)
     session.commit()
+
+    dp = get_discussion_post(dp_id)
+    new_notification = Notification(
+        student_id= dp.student_id,
+        title="New reply on " + dp.title + " post",
+        message=new_comment.get_student_name() + " replied: " + new_comment.get_message(),
+        created_at=datetime.datetime.now()
+    )
+    session.add(new_notification)
+    session.commit()
+
     return True
 
 def get_comment_from_note(note_id):
@@ -597,6 +623,7 @@ def get_comment_from_note(note_id):
             comment.student_id = row[1]
             comment.note_id = row[2]
             comment.message = row[3]
+            comment.created_at = row[4]
             comments_list.append(comment)
     return comments_list
 
@@ -604,16 +631,46 @@ def add_comment_to_note(note_id, student_id, message):
     new_comment = Comment(
         note_id=note_id,
         student_id=student_id,
-        message=message
+        message=message,
+        created_at=datetime.datetime.now()
     )
     session.add(new_comment)
+    session.commit()
+
+    note = get_note(note_id)
+    new_notification = Notification(
+        student_id= note.studentId,
+        title="New comment on " + note.title + " note",
+        message=new_comment.get_student_name() + " commented: " + new_comment.get_message(),
+        created_at=datetime.datetime.now()
+    )
+    session.add(new_notification)
     session.commit()
     return True
 
 
+def get_notifications(student_id):
+    notifications_list = []
+
+    with engine.connect() as conn:
+        result = conn.execute(text(f"SELECT * FROM Notification WHERE student_id = :student_id"), {'student_id': student_id})
+        
+        # collecting all notification objects and adding them to a list
+        for row in result.all():
+            notification = Notification()
+            notification.notification_id = row[0]
+            notification.student_id = row[1]
+            notification.title = row[2]
+            notification.message = row[3]
+            notification.created_at = row[4]
+            notifications_list.append(notification)
+    return notifications_list
+
+"""
 # testing
 if __name__ == '__main__':
-    print(get_comment_from_note(6))
+"""
+
 
 
 
