@@ -41,9 +41,9 @@ FreqDist: used to find the most common words in the text.
 
 """
 
-
-
 """
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 # used to download the necessary resources for NLTK
 nltk.download('punkt')
 nltk.download('stopwords')
