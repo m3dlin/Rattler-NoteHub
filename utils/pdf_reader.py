@@ -50,7 +50,7 @@ def remove_temp_file():
 """"""
 # testing
 if __name__ == '__main__':
-    pdf_path = get_note(27).file_path
+    pdf_path = get_note(44).file_path
     download_pdf_from_firebase(pdf_path)
 
     text = extract_text_from_pdf("uploads/temp.pdf")
