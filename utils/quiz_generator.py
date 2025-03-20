@@ -1,24 +1,77 @@
-from transformers import T5ForConditionalGeneration, T5Tokenizer
+from openai import OpenAI
+import os
+import json
+import re
 
-from pdf_reader import extract_text_from_pdf,download_pdf_from_firebase
-from database import get_note
+from utils.pdf_reader import extract_text_from_pdf, download_pdf_from_firebase
 
-# Load the fine-tuned T5 model specifically for question generation
-model = T5ForConditionalGeneration.from_pretrained("valhalla/t5-small-qg-hl")
-tokenizer = T5Tokenizer.from_pretrained("valhalla/t5-small-qg-hl", legacy=False)
+def generate_quiz(file_path):
 
-def generate_question(text):
-    # Make the prompt more specific, asking for a question based on the content of the text
-    input_text = f"Generate a multiple-choice question with four options, including the correct answer, based on the following text. Provide the question and the options in this format: Question: <question> A) <option1> B) <option2> C) <option3> D) <option4>: {text}"
-    input_ids = tokenizer.encode(input_text, return_tensors="pt")
+    download_pdf_from_firebase(file_path)
+    text = extract_text_from_pdf("uploads/temp.pdf")
 
-    # Generate the question
-    outputs = model.generate(input_ids, max_length=150, num_beams=4, early_stopping=True)
-    question = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    return question
 
-# Example text
-download_pdf_from_firebase(get_note(44).file_path)
-extracted_text = extract_text_from_pdf("uploads/temp.pdf")
-question = generate_question(extracted_text)
-print(question)
+    client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+    input_content = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "user", 
+                "content": (
+                    "Create a 5-question multiple-choice quiz based on the following text. "
+                    "Format the response in this exact structure:\n\n"
+                    "1. Question text\n"
+                    "   a) Option 1\n"
+                    "   b) Option 2\n"
+                    "   c) Option 3\n"
+                    "   d) Option 4\n"
+                    "Answer: (correct option letter)\n\n"
+                    "Text:\n" + text
+                )   
+            }
+        ],
+        )
+    response_content = input_content.choices[0].message.content
+    return response_content
+
+
+
+def format_quiz_to_json(response_content):
+    """
+    parses the generated quiz text and formats it into a JSON structure.
+    the quiz follows a structured format like:
+
+    {
+        question: "What is Capital of France?",
+        options: ["a) Paris", "b) London", "c) Berlin", "d) Rome"],
+        answer: "a"
+    }
+    """
+    quiz = []
+    questions = re.split(r"\n\d+\.", response_content)  # Split by numbered questions
+
+    for question in questions[1:]:  # Skip empty first split
+        lines = question.strip().split("\n")
+        if len(lines) < 5:  # Ensure there is a question, 4 options, and an answer
+            continue
+        
+        question_text = lines[0].strip()
+        options = [f"{chr(65+i)}. {line[3:].strip()}" for i, line in enumerate(lines[1:5])]  # Format as "A. Option"
+        answer_line = next((line for line in lines if line.lower().startswith("answer:")), None)
+
+        if answer_line:
+            answer = answer_line.split(":")[1].strip().lower()  # Extract the answer letter
+        else:
+            answer = None  # Fallback if no answer is found
+
+        quiz.append({
+            "question": question_text,
+            "options": options,
+            "answer": answer
+        })
+
+    return json.dumps({"quiz": quiz}, indent=4)  # Convert to JSON format
+
+
+

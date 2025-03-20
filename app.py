@@ -12,6 +12,7 @@ from utils.database import (get_course_nums, check_credentials, get_student_info
                             add_note_to_db,get_course_notes_with_tags, add_discussion_post, get_discussion_posts,
                             add_comment_to_post, get_comment_from_note, add_comment_to_note, get_notifications)
 from utils.firebase import delete_file_from_firebase, upload_to_firebase
+from utils.quiz_generator import generate_quiz, format_quiz_to_json
 from dotenv import load_dotenv
 import os
 import json
@@ -220,9 +221,14 @@ def inbox_page():
 
 
 # FUTURE - 'quiz<noteId>' route to be implemented
-@app.route('/quiz', methods=['GET'])
-def quiz_page():
-    return render_template('quiz-page.html'), 200
+@app.route('/quiz<noteId>', methods=['GET'])
+def quiz_page(noteId):
+    
+    note_file_path = get_note(noteId).file_path
+    
+    quiz_json = format_quiz_to_json(generate_quiz(note_file_path))
+
+    return render_template('quiz-page.html', quiz=quiz_json), 200
 
 
 

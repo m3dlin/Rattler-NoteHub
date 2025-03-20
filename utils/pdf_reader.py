@@ -13,7 +13,6 @@ NOTES:
 """
 
 from pypdf import PdfReader
-from database import get_note
 import requests
 import os
 
@@ -46,12 +45,3 @@ def remove_temp_file():
     if os.path.exists("uploads/temp.pdf"):
         os.remove("uploads/temp.pdf")
 
-
-""""""
-# testing
-if __name__ == '__main__':
-    pdf_path = get_note(44).file_path
-    download_pdf_from_firebase(pdf_path)
-
-    text = extract_text_from_pdf("uploads/temp.pdf")
-    print(text)

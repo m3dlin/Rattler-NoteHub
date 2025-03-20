@@ -40,28 +40,7 @@
     </div>
 
     <script>
-        const questions = [
-            {
-                question: "What is 45 - 3?",
-                options: ["A. 42", "B. 41", "C. 40", "D. 39"],
-                answer: "a"
-            },
-            {
-                question: "What is 2 + 2?",
-                options: ["A. 3", "B. 4", "C. 5", "D. 6"],
-                answer: "b"
-            },
-            {
-                question: "What is 5 * 5?",
-                options: ["A. 20", "B. 25", "C. 30", "D. 35"],
-                answer: "b"
-            },
-            {
-                question: "What is 10 / 2?",
-                options: ["A. 2", "B. 3", "C. 4", "D. 5"],
-                answer: "c"
-            }
-        ];
+        const questions = "{{ quiz | tojson | safe }};"
 
         let currentQuestionIndex = 0;
         let score = 0;
