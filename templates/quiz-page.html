@@ -13,9 +13,9 @@
 <body>
     <!--header-->
     {% include 'header.html' %}
-    
+
     <div class="quiz-container" style="margin-top: 60px; margin-bottom: 60px;">
-        <h1 style="text-align: center;"> *Note Name* Quiz</h1>
+        <h1 style="text-align: center;">*Note* Quiz</h1>
         <div class="progress" style="height: 20px; margin-bottom: 20px;">
             <div class="progress-bar" role="progressbar" style="width: 0%;" id="progress-bar"></div>
         </div>
@@ -31,29 +31,37 @@
             <h2>Quiz Results</h2>
             <p id="result-text"></p>
             <div id="detailed-results"></div>
-            <!--Buttons to retake or go back to note NEED TO DO THE HREF-->
             <div style="text-align: center;">
-            <a href="/quiz" class="btn" style="color: white; background-color: #395a7f; margin-right: 20px;">Retake</a>
-            <a class="btn" style="color: white; background-color: #395a7f;">Back to Note</a>
+                <a href="/quiz" class="btn" style="color: white; background-color: #395a7f; margin-right: 20px;">Retake</a>
+                <a class="btn" style="color: white; background-color: #395a7f;">Back to Note</a>
             </div>
         </div>
     </div>
 
+    <!-- Store quiz data in a div with data attribute -->
+    <div id="quiz-data" style="display: none;" data-quiz="{{ quiz_data }}"></div>
+
     <script>
-        const questions = "{{ quiz | tojson | safe }};"
+        // Parse the JSON from the data-quiz attribute
+        const quizData = JSON.parse(document.getElementById('quiz-data').getAttribute('data-quiz')).quiz;
+
+        console.log(quizData);
 
         let currentQuestionIndex = 0;
         let score = 0;
-        const userAnswers = new Array(questions.length).fill(null);
+        const userAnswers = new Array(quizData.length).fill(null);
 
         function showQuestion(index) {
             const questionContainer = document.getElementById('question-container');
             questionContainer.innerHTML = `
-                <p>${index + 1}. ${questions[index].question}</p>
+                <p>${index + 1}. ${quizData[index].question}</p>
                 <ul class="options">
-                    ${questions[index].options.map((option, i) => `
+                    ${quizData[index].options.map((option, i) => `
                         <div class="card" style="margin-bottom:10px; padding: 10px;"> 
-                        <li><input type="radio" name="q${index}" value="${String.fromCharCode(97 + i)}" ${userAnswers[index] === String.fromCharCode(97 + i) ? 'checked' : ''}> ${option}</li>
+                            <li>
+                                <input type="radio" name="q${index}" value="${String.fromCharCode(97 + i)}" 
+                                ${userAnswers[index] === String.fromCharCode(97 + i) ? 'checked' : ''}> ${option}
+                            </li>
                         </div>
                     `).join('')}
                 </ul>
@@ -62,15 +70,15 @@
 
         function updateProgressBar() {
             const progressBar = document.getElementById('progress-bar');
-            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
             progressBar.style.width = `${progress}%`;
-            progressBar.innerText = `${currentQuestionIndex + 1}/${questions.length}`;
+            progressBar.innerText = `${currentQuestionIndex + 1}/${quizData.length}`;
         }
 
         function updateButtons() {
             const nextBtn = document.getElementById('next-btn');
             const submitBtn = document.getElementById('submit-btn');
-            if (currentQuestionIndex === questions.length - 1) {
+            if (currentQuestionIndex === quizData.length - 1) {
                 nextBtn.style.display = 'none';
                 submitBtn.style.display = 'inline-block';
             } else {
@@ -81,8 +89,9 @@
 
         function calculateScore() {
             score = 0;
-            questions.forEach((question, index) => {
-                if (userAnswers[index] === question.answer) {
+            quizData.forEach((question, index) => {
+                const correctLetter = question.answer.match(/\((\w)\)/)?.[1].toLowerCase();
+                if (userAnswers[index] === correctLetter) {
                     score++;
                 }
             });
@@ -90,13 +99,16 @@
 
         function showResults() {
             const detailedResults = document.getElementById('detailed-results');
-            detailedResults.innerHTML = questions.map((question, index) => `
+            detailedResults.innerHTML = quizData.map((question, index) => {
+                const correctLetter = question.answer.match(/\((\w)\)/)?.[1].toLowerCase();
+                return `
                 <div style="text-align: left; margin-bottom: 20px;">
                     <p><strong>${index + 1}. ${question.question}</strong></p>
                     <p>Your answer: ${userAnswers[index] ? question.options[userAnswers[index].charCodeAt(0) - 97] : 'No answer'}</p>
-                    <p>Correct answer: ${question.options[question.answer.charCodeAt(0) - 97]}</p>
+                    <p>Correct answer: ${question.options[correctLetter.charCodeAt(0) - 97]}</p>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         document.getElementById('next-btn').addEventListener('click', () => {
@@ -104,7 +116,7 @@
             if (selectedOption) {
                 userAnswers[currentQuestionIndex] = selectedOption.value;
             }
-            if (currentQuestionIndex < questions.length - 1) {
+            if (currentQuestionIndex < quizData.length - 1) {
                 currentQuestionIndex++;
                 showQuestion(currentQuestionIndex);
                 updateProgressBar();
@@ -135,11 +147,11 @@
             document.getElementById('back-btn').style.display = 'none';
             document.getElementById('submit-btn').style.display = 'none';
             document.getElementById('result-container').style.display = 'block';
-            document.getElementById('result-text').innerText = `You scored ${score} out of ${questions.length}`;
+            document.getElementById('result-text').innerText = `You scored ${score} out of ${quizData.length}`;
             showResults();
         });
 
-        // Initialize the first question and progress bar
+        // Initialize first question and progress bar
         showQuestion(currentQuestionIndex);
         updateProgressBar();
         updateButtons();
