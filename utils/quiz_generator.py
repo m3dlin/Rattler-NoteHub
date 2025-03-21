@@ -19,7 +19,7 @@ def generate_quiz(file_path):
             {
                 "role": "user", 
                 "content": (
-                    "Create a 10-question multiple-choice quiz based on the following text. "
+                    "Create a 5-question multiple-choice quiz based on the following text. "
                     "Format the response in this exact structure:\n\n"
                     "1. Question text\n"
                     "   a) Option 1\n"
@@ -52,7 +52,7 @@ def format_quiz_to_json(response_content):
     questions = re.split(r"\n\d+\.", response_content)  # split by numbered questions
 
     # skip empty first split
-    for question in questions[0:]:  
+    for question in questions[1:]:  
         lines = question.strip().split("\n")
         if len(lines) < 5:  # ensure there is a question, 4 options, and an answer
             continue
