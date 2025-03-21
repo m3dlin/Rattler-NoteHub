@@ -19,7 +19,7 @@ def generate_quiz(file_path):
             {
                 "role": "user", 
                 "content": (
-                    "Create a 5-question multiple-choice quiz based on the following text. "
+                    "Create a 10-question multiple-choice quiz based on the following text. "
                     "Format the response in this exact structure:\n\n"
                     "1. Question text\n"
                     "   a) Option 1\n"
@@ -49,21 +49,22 @@ def format_quiz_to_json(response_content):
     }
     """
     quiz = []
-    questions = re.split(r"\n\d+\.", response_content)  # Split by numbered questions
+    questions = re.split(r"\n\d+\.", response_content)  # split by numbered questions
 
-    for question in questions[1:]:  # Skip empty first split
+    # skip empty first split
+    for question in questions[0:]:  
         lines = question.strip().split("\n")
-        if len(lines) < 5:  # Ensure there is a question, 4 options, and an answer
+        if len(lines) < 5:  # ensure there is a question, 4 options, and an answer
             continue
         
         question_text = lines[0].strip()
-        options = [f"{chr(65+i)}. {line[3:].strip()}" for i, line in enumerate(lines[1:5])]  # Format as "A. Option"
+        options = [f"{chr(65+i)}. {line[3:].strip()}" for i, line in enumerate(lines[1:5])]  # formatting options
         answer_line = next((line for line in lines if line.lower().startswith("answer:")), None)
 
         if answer_line:
-            answer = answer_line.split(":")[1].strip().lower()  # Extract the answer letter
+            answer = answer_line.split(":")[1].strip().lower()  # getting the answer
         else:
-            answer = None  # Fallback if no answer is found
+            answer = None
 
         quiz.append({
             "question": question_text,
@@ -71,7 +72,7 @@ def format_quiz_to_json(response_content):
             "answer": answer
         })
 
-    return json.dumps({"quiz": quiz}, indent=4)  # Convert to JSON format
+    return json.dumps({"quiz": quiz}, indent=4)  # convert to JSON format
 
 
 

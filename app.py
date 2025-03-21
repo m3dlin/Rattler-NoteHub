@@ -227,7 +227,7 @@ def quiz_page(noteId):
     note_file_path = get_note(noteId).file_path
     
     quiz_json = format_quiz_to_json(generate_quiz(note_file_path))
-
+    
     return render_template('quiz-page.html', quiz_data=quiz_json), 200
 
 
