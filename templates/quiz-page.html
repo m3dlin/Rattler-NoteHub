@@ -15,7 +15,7 @@
     {% include 'header.html' %}
 
     <div class="quiz-container" style="margin-top: 60px; margin-bottom: 60px;">
-        <h1 style="text-align: center;">*Note* Quiz</h1>
+        <h1 style="text-align: center;">Practice Quiz</h1>
         <div class="progress" style="height: 20px; margin-bottom: 20px;">
             <div class="progress-bar" role="progressbar" style="width: 0%;" id="progress-bar"></div>
         </div>
@@ -32,8 +32,8 @@
             <p id="result-text"></p>
             <div id="detailed-results"></div>
             <div style="text-align: center;">
-                <a href="/quiz" class="btn" style="color: white; background-color: #395a7f; margin-right: 20px;">Retake</a>
-                <a class="btn" style="color: white; background-color: #395a7f;">Back to Note</a>
+                <button class="btn" onclick="location.reload();" style="color: white; background-color: #395a7f; margin-right: 20px;">Retake</button>
+                <a id="back-to-note" class="btn" style="color: white; background-color: #395a7f;">Back to Note</a>
             </div>
         </div>
     </div>
@@ -90,7 +90,7 @@
         function calculateScore() {
             score = 0;
             quizData.forEach((question, index) => {
-                const correctLetter = question.answer.match(/\((\w)\)/)?.[1].toLowerCase();
+                const correctLetter = question.answer.toLowerCase();
                 if (userAnswers[index] === correctLetter) {
                     score++;
                 }
@@ -98,18 +98,26 @@
         }
 
         function showResults() {
-            const detailedResults = document.getElementById('detailed-results');
-            detailedResults.innerHTML = quizData.map((question, index) => {
-                const correctLetter = question.answer.match(/\((\w)\)/)?.[1].toLowerCase();
-                return `
+        const detailedResults = document.getElementById('detailed-results');
+        detailedResults.innerHTML = quizData.map((question, index) => {
+            const userAnswer = userAnswers[index];
+            const correctLetter = question.answer.toLowerCase();
+
+            const userOptionText = (userAnswer !== null)
+                ? question.options[userAnswer.charCodeAt(0) - 97]
+                : 'No answer';
+
+            const correctOptionText = question.options[correctLetter.charCodeAt(0) - 97];
+
+            return `
                 <div style="text-align: left; margin-bottom: 20px;">
                     <p><strong>${index + 1}. ${question.question}</strong></p>
-                    <p>Your answer: ${userAnswers[index] ? question.options[userAnswers[index].charCodeAt(0) - 97] : 'No answer'}</p>
-                    <p>Correct answer: ${question.options[correctLetter.charCodeAt(0) - 97]}</p>
+                    <p>Your answer: ${userOptionText}</p>
+                    <p>Correct answer: ${correctOptionText}</p>
                 </div>
             `;
-            }).join('');
-        }
+        }).join('');
+}
 
         document.getElementById('next-btn').addEventListener('click', () => {
             const selectedOption = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
@@ -155,6 +163,18 @@
         showQuestion(currentQuestionIndex);
         updateProgressBar();
         updateButtons();
+
+        // setting href for back-to-note button
+        const currentURL = window.location.pathname;
+        const quizMatch = currentURL.match(/quiz(\d+)/);  // getting quiz number ex: /quiz44
+
+        if (quizMatch) {
+            const quizNumber = quizMatch[1];
+            document.getElementById('back-to-note').href = `/viewnote${quizNumber}`;
+        }
+
+
+
     </script>
 </body>
 </html>

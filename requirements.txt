@@ -11,8 +11,5 @@ pymysql
 firebase-admin
 gunicorn
 pypdf
-nltk
-scikit-learn
-transformers 
-torch 
 openai
+python-dateutil

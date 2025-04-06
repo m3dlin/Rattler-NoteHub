@@ -13,6 +13,7 @@ load_dotenv()
 import os
 import bcrypt
 import datetime
+from dateutil import parser
 
 # Reads credentials from the config file
 user = os.getenv('DB_USER')
@@ -135,6 +136,7 @@ class Notification(Base):
     title = Column(String(255))
     message = Column(String(255))
     created_at = Column(TIMESTAMP)
+    time_ago = Column(String(255))
 
 
 #########################################################################################################
@@ -585,7 +587,7 @@ def get_comments_on_post(dp_id):
             comment.student_id = row[1]
             comment.dp_id = row[2]
             comment.message = row[3]
-            comment.created_at = row[4]
+            comment.created_at = row[5]
             comments_list.append(comment)
     return comments_list
 
@@ -623,7 +625,8 @@ def get_comment_from_note(note_id):
             comment.student_id = row[1]
             comment.note_id = row[2]
             comment.message = row[3]
-            comment.created_at = row[4]
+            formatted_created_at = row[5].strftime('%B %d, %Y')
+            comment.created_at = formatted_created_at
             comments_list.append(comment)
     return comments_list
 
@@ -662,9 +665,36 @@ def get_notifications(student_id):
             notification.student_id = row[1]
             notification.title = row[2]
             notification.message = row[3]
-            notification.created_at = row[4]
+            formatted_created_at = row[4].strftime('%B %d, %Y')
+            notification.created_at = formatted_created_at
             notifications_list.append(notification)
     return notifications_list
+
+
+# Function to calculate time ago with more precision
+def time_ago(created_at):
+    now = datetime.datetime.now()  # Use the correct import for datetime
+    created_time = parser.parse(created_at)
+    diff = now - created_time
+
+    # Calculate the total number of seconds
+    seconds = diff.total_seconds()
+
+    # Calculate the time difference in a more detailed way
+    if seconds < 86400:
+        return "Today"  # Less than a day ago, you can say "Today"
+    elif seconds < 172800:  # Less than 2 days
+        return "Yesterday"
+    elif seconds < 2592000:  # Less than a month
+        days = seconds // 86400
+        return f"{int(days)} days ago"
+    elif seconds < 31536000:  # Less than a year
+        months = seconds // 2592000
+        return f"{int(months)} months ago"
+    else:
+        years = seconds // 31536000
+        return f"{int(years)} years ago"
+
 
 """
 # testing

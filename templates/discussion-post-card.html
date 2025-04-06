@@ -28,7 +28,9 @@
                     <!-- comments list -->
                     {% for comment in post.get_comments_on_post() %}
                         <div class="card card-body" style="margin-top: 10px;">
-                            {{ comment.message }} - {{ comment.get_student_name() }}
+                            <p style="padding-bottom: 10px;">{{ comment.message }}</p>
+                            
+                            <p> - {{ comment.get_student_name() }} </p>
                         </div>
                     {% endfor %}
                 </div> 

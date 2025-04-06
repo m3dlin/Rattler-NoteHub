@@ -1,12 +1,11 @@
-<!--TODO: DYNAMIC POST CARD-->
 <div class="col-12 mx-3 mx-auto mb-3">
     <div class="card" style="border-color: #6e9fc1;"> 
         <div class="card-body row">
 
-            <!--user who made the post and the discussion topic-->
             <div class="col-10">
                 
-                <p id="Username" style="padding-bottom: 5px;">{{comment.get_student_name()}}</p>
+                <p id="Username" style="padding-bottom: 2px; margin-bottom: 0;">{{comment.get_student_name()}}</p>
+                <p id="Date" style="padding-bottom: 2px; margin-top: 0; margin-bottom: 5px;">{{comment.created_at}}</p>
                 <p id="message">{{comment.message}}</p>
 
             </div>

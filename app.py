@@ -10,7 +10,8 @@ from utils.database import (get_course_nums, check_credentials, get_student_info
                             update_selected_note, delete_selected_note, Note, increment_upvotes,
                             increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status, 
                             add_note_to_db,get_course_notes_with_tags, add_discussion_post, get_discussion_posts,
-                            add_comment_to_post, get_comment_from_note, add_comment_to_note, get_notifications)
+                            add_comment_to_post, get_comment_from_note, add_comment_to_note, get_notifications,
+                            time_ago)
 from utils.firebase import delete_file_from_firebase, upload_to_firebase
 from utils.quiz_generator import generate_quiz, format_quiz_to_json
 from dotenv import load_dotenv
@@ -216,6 +217,11 @@ def submit_note():
 def inbox_page():
 
     notifications = get_notifications(get_student_id(session['email']))
+    for notification in notifications:
+        # update the created_at field to the time ago format
+        created_at = notification.created_at
+        if created_at:
+            notification.time_ago = time_ago(created_at)
 
     return render_template('inbox-page.html', notifications=notifications), 200
 
@@ -225,9 +231,9 @@ def inbox_page():
 def quiz_page(noteId):
     
     note_file_path = get_note(noteId).file_path
-    
+
     quiz_json = format_quiz_to_json(generate_quiz(note_file_path))
-    
+    print(quiz_json)
     return render_template('quiz-page.html', quiz_data=quiz_json), 200
 
 
