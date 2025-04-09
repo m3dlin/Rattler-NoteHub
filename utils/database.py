@@ -137,6 +137,8 @@ class Notification(Base):
     message = Column(String(255))
     created_at = Column(TIMESTAMP)
     time_ago = Column(String(255))
+    course_id = Column(Integer)
+    note_id = Column(Integer)
 
 
 #########################################################################################################
@@ -606,7 +608,8 @@ def add_comment_to_post(dp_id, student_id, message):
         student_id= dp.student_id,
         title="New reply on " + dp.title + " post",
         message=new_comment.get_student_name() + " replied: " + new_comment.get_message(),
-        created_at=datetime.datetime.now()
+        created_at=datetime.datetime.now(),
+        course_id=dp.course_id
     )
     session.add(new_notification)
     session.commit()
@@ -645,7 +648,8 @@ def add_comment_to_note(note_id, student_id, message):
         student_id= note.studentId,
         title="New comment on " + note.title + " note",
         message=new_comment.get_student_name() + " commented: " + new_comment.get_message(),
-        created_at=datetime.datetime.now()
+        created_at=datetime.datetime.now(),
+        note_id=note.noteId
     )
     session.add(new_notification)
     session.commit()
@@ -667,28 +671,34 @@ def get_notifications(student_id):
             notification.message = row[3]
             formatted_created_at = row[4].strftime('%B %d, %Y')
             notification.created_at = formatted_created_at
+
+            # depending on the type of notification, get the id of the post or note
+            if row[6] != None:
+                notification.course_id = row[6]
+            if row[7] != None:
+                notification.note_id = row[7]
+
             notifications_list.append(notification)
     return notifications_list
 
 
-# Function to calculate time ago with more precision
+# function to calculate time ago with more precision
 def time_ago(created_at):
-    now = datetime.datetime.now()  # Use the correct import for datetime
+    now = datetime.datetime.now()
     created_time = parser.parse(created_at)
     diff = now - created_time
 
     # Calculate the total number of seconds
     seconds = diff.total_seconds()
 
-    # Calculate the time difference in a more detailed way
     if seconds < 86400:
-        return "Today"  # Less than a day ago, you can say "Today"
-    elif seconds < 172800:  # Less than 2 days
+        return "Today"  # < a day ago, you can say "Today"
+    elif seconds < 172800:  # < 2 days
         return "Yesterday"
-    elif seconds < 2592000:  # Less than a month
+    elif seconds < 2592000:  # < a month
         days = seconds // 86400
         return f"{int(days)} days ago"
-    elif seconds < 31536000:  # Less than a year
+    elif seconds < 31536000:  # < a year
         months = seconds // 2592000
         return f"{int(months)} months ago"
     else:

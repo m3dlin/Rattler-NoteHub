@@ -38,14 +38,12 @@
         </div>
     </div>
 
-    <!-- Store quiz data in a div with data attribute -->
+    <!-- storing quiz data in a div with data attribute -->
     <div id="quiz-data" style="display: none;" data-quiz="{{ quiz_data }}"></div>
 
     <script>
-        // Parse the JSON from the data-quiz attribute
+        // parsing the JSON
         const quizData = JSON.parse(document.getElementById('quiz-data').getAttribute('data-quiz')).quiz;
-
-        console.log(quizData);
 
         let currentQuestionIndex = 0;
         let score = 0;
@@ -159,7 +157,7 @@
             showResults();
         });
 
-        // Initialize first question and progress bar
+        // setting up the first question and progress bar
         showQuestion(currentQuestionIndex);
         updateProgressBar();
         updateButtons();

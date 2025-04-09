@@ -65,12 +65,20 @@
                 const message = item.getAttribute('data-message');
                 const sender = item.getAttribute('data-sender');
                 const time = item.getAttribute('data-time');
-    
+                const id = item.getAttribute('data-id');
+                const checkId = item.getAttribute('data-check-id');
+                
                 // Populate message details
                 document.getElementById('messageTitle').textContent = title;
                 document.getElementById('messageBody').textContent = message;
                 document.getElementById('messageSender').textContent = sender;
                 document.getElementById('messageTime').textContent = time;
+                if (item.getAttribute('data-check-id') === 'true') {
+                    document.getElementById('original-post-btn').setAttribute('onclick', `window.location.href='/viewnote${id}'`);
+                } else {
+                    document.getElementById('original-post-btn').setAttribute('onclick', `window.location.href='/${id}'`);
+                }
+                
     
                 // Toggle visibility
                 document.getElementById('defaultMessage').classList.add('d-none');
