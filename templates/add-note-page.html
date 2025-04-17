@@ -1,239 +1,177 @@
 <!DOCTYPE html>
-
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
-        <link rel="stylesheet" href="static/styles.css">
-        <title>Rattler NoteHub</title>
-<style>
-            .body {
-                font-family: 'Montserrat'
-            }
-        </style>
-    </head>
 
-    <body onload="date()">
-        {% include 'header.html' %}
-            <style>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Note</title>
 
-                .testbar{
-                    width: 250px;
-                    background-color:#e9ecee;
-                    padding-top: 50px;
-                    position: absolute;
-                    font-family: 'Montserrat'
-                }
+    <!-- Bootstrap & Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="static/styles.css">
 
-                .barcontent{    
-                    padding-top:10px;
-                    padding-bottom:20px;
-                    padding-left:10px
-                }
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-                hr.blackline {
-                    border-top: 3px solid black;
-                    width:250px;
-                }
+        .container-fluid {
+            min-height: 100vh;
+            display: flex;
+        }
 
-                .noteonly{
-                    padding-left:150px;
-                    height:100%;
-                    width:100%;
-                    object-fit: cover;
-                }
+        #Note-Viewer {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #ffffff;
+        }
 
-                .uploadButton{
-                    padding-top:center;
-                    text-align: center;
-                    font-family: 'Montserrat'
-                }
+        #Note-Info-Sidebar {
+            width: 25%;
+            background-color: #f0f0f0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-                .publishButton{
-                    text-align: left;
-                    padding-left:75px;
-                    font-family: 'Montserrat'
-                }
+        hr.blackline {
+            border-top: 2px solid black;
+        }
 
-                .body {
-                    font-family: 'Montserrat'
-                }
+        input[type="text"],
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 6px;
+            margin-top: 6px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
 
-                .pdf {
-                    padding-left:200px;
-                    padding-top:center;
-                    text-align: center;
-                    width: 100%;
-                }
-                #tag {
-                    padding: 5px;
-                    font-size: 16px;
-                    width: 160px;
-                }
+        .form-section {
+            margin-bottom: 20px;
+        }
 
-            </style>
-        
+        .pdf-preview {
+            width: 100%;
+            height: 800px;
+            border: none;
+        }
+    </style>
+</head>
+
+<body onload="setDate()">
+    {% include 'header.html' %}
+    
+    <div class="main-content">
         <form id="noteForm" action="/submit_note" method="POST" enctype="multipart/form-data" onsubmit="return publish()">
-            <div style="display: flex">
-
-                <object id="change" class="pdf" 
-                data="https://mag.wcoomd.org/uploads/2018/05/blank.pdf"
-                width="800"
-                height="800">
-                </object>
+            <div class="container-fluid">
+                <!-- Sidebar -->
+                <div id="Note-Info-Sidebar">
+                    <div class="form-section">
+                        <label for="finput"><h5>Upload PDF:</h5></label>
+                        <input type="file" name="pdf_file" accept="application/pdf" id="finput" onchange="upload()">
+                    </div>
+                    <hr class="blackline">
     
-                <div class="testbar">
-                    <div class="note">
-                        <div class="uploadButton">
-                            <input type="file" name="pdf_file" accept="application/pdf" multiple="false" accept="application/pdf" id=finput onchange="upload()">    
-                        </div>        
+                    <div class="form-section">
+                        <label for="titleID"><h5>Title:</h5></label>
+                        <input type="text" id="titleID" name="titlename" placeholder="Note title...">
                     </div>
                     <hr class="blackline">
-                    <div class="barcontent">
-                        <label for="title">
-                            <h2 style = "font-weight: bold;">
-                            Title:
-                            </h2>
-                            </label>
-                            <br>
-                            <input type="text" id="titleID" name="titlename" placeholder="Note title...">
-                    </div>
-                    <hr class="blackline">
-                    <div style="padding-left:10px;">
-                        <label for="courseNumber">
-                            <h2 style = "font-weight: bold;">
-                            Course:
-                            </h2>
-                            <br>
-                            </label>
-                    </div>
-                    
-                    <div style="padding-left:10px;">
-                        <!--change to dynamic values-->
-                        <select id="courseID" name="courseName" style= padding-left:10px;>
-                        {% for course in courses %}
-                            <option> {{course}}</option>
-                        {% endfor %}
+    
+                    <div class="form-section">
+                        <label for="courseID"><h5>Course:</h5></label>
+                        <select id="courseID" name="courseName">
+                            {% for course in courses %}
+                                <option>{{ course }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <hr class="blackline">
-                    
-                <div class="barcontent">
-                    <label for="date">
-                        <h2 style = "font-weight: bold;">
-                        Date:
-                        <span id="dateID"></span></h2>
-                        </label>
-                        <br>
-                </div>
-                <hr class="blackline">
-                
-                <div class="barcontent">
-                    <label for="tags">
-                        <h2 style = "font-weight: bold;">
-                        Tags:
-                        </h2>
-                        <br>
-                        </label>
+    
+                    <div class="form-section">
+                        <h5>Date: <span id="dateID"></span></h5>
+                    </div>
+                    <hr class="blackline">
+    
+                    <div class="form-section">
+                        <label for="tag"><h5>Tags:</h5></label>
                         <select id="tag" name="tag">
-                        {% for tag in tags %}
-                            <option> {{tag}}</option>
-                        {% endfor %}
+                            {% for tag in tags %}
+                                <option>{{ tag }}</option>
+                            {% endfor %}
                         </select>
-                </div>
-                <hr class="blackline">
-                
-                <div class="barcontent">
-                    <label for="description">
-                        <h2 style = "font-weight: bold;">
-                        Description:
-                        </h2>
-                        </label>
-                        <br>
-                        <input type="text" id="descriptionID" name="descriptionName" placeholder="Note Description...">
-                </div>
-                <hr class="blackline">
+                    </div>
+                    <hr class="blackline">
     
-                <div style="padding-left:10px;">
-                    <label for="visibility">
-                        <h2 style = "font-weight: bold;">
-                        Visibility:
-                        </h2>
-                        <br>
-                        </label>
-                </div>
-                
-                <div style="padding-left:10px;">
-                    <select id="visibilityID" name="visibilityName" style= padding-left:10px;>
+                    <div class="form-section">
+                        <label for="descriptionID"><h5>Description:</h5></label>
+                        <input type="text" id="descriptionID" name="descriptionName" placeholder="Note description...">
+                    </div>
+                    <hr class="blackline">
+    
+                    <div class="form-section">
+                        <label for="visibilityID"><h5>Visibility:</h5></label>
+                        <select id="visibilityID" name="visibilityName">
                             <option value="Public">Public</option>
                             <option value="Private">Private</option>
-                    </select>
-                </div>
-                <hr class="blackline">
-                    
-                <div class="barcontent">
-                    <div class="publishButton">
-                        <button type="submit" >Publish</button>
+                        </select>
                     </div>
-                    
-                </div> 
-                
-
+                    <hr class="blackline">
+    
+                    <button type="submit" class="btn btn-dark" style="width: 100%;">Publish</button>
+                </div>
+    
+                <!-- PDF Viewer -->
+                <div id="Note-Viewer">
+                    <object id="change" class="pdf-preview"
+                        data="https://mag.wcoomd.org/uploads/2018/05/blank.pdf"
+                        type="application/pdf">
+                    </object>
+                </div>
             </div>
-
         </form>
+    </div>
+    
 
+    <script>
+        function setDate() {
+            const now = new Date();
+            const formatted = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+            document.getElementById("dateID").textContent = formatted;
+        }
 
-
-        
-
-        <script>
-            function publish(){
-                var noteTitle = document.getElementById("titleID").value;
-                var noteCourse = document.getElementById("courseID").value;
-                var noteDate = document.getElementById("dateID").innerHTML = m + "/" + d + "/" + y;
-                var noteTags = document.getElementById("tag").value;
-                var noteDescription = document.getElementById("descriptionID").value;
-                var noteVisibility = document.getElementById("visibilityID").value;
-                var noteLink = document.getElementById("finput").value;
-                
-                // check if fields are left empty
-                if (noteTitle.trim() === '' || noteCourse.trim() === '' || noteDate.trim() === '' || noteTags.trim() === '' || noteDescription.trim() === ''|| noteVisibility.trim() === ''|| noteLink.trim() === '') {
-                    alert("Please fill in all fields.");
-                    return false; // prevent form submission
-                }
-                else{
-                    alert("Title: " + noteTitle + "\nCourse: " + noteCourse + "\nDate: " + noteDate + "\nTags: " + noteTags + "\nDescription: " + noteDescription + "\nVisibility: " + noteVisibility);
-                    return true; // form is ready for submission
-                }
-
-            }
-
-            function date(){
-                n =  new Date();
-                y = n.getFullYear();
-                m = n.getMonth() + 1;
-                d = n.getDate();
-                document.getElementById("dateID").innerHTML = m + "/" + d + "/" + y;
-            }
-
-            function upload(){
-                var fileInput = document.getElementById("finput");
-                var file = fileInput.files[0]; // Get the first file from the input
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    var pdfViewer = document.getElementById("change");
-                    pdfViewer.setAttribute("data", e.target.result); // Set the data attribute with the base64 data URL
+        function upload() {
+            const fileInput = document.getElementById("finput");
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("change").data = e.target.result;
                 };
-
-                reader.readAsDataURL(file); // Read the file as a data URL
+                reader.readAsDataURL(file);
             }
+        }
 
+        function publish() {
+            const fields = ["titleID", "courseID", "tag", "descriptionID", "visibilityID", "finput"];
+            for (let id of fields) {
+                const el = document.getElementById(id);
+                if (!el.value.trim()) {
+                    alert("Please fill in all fields.");
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</body>
 
-
-        </script>
-    </body>
 </html>
