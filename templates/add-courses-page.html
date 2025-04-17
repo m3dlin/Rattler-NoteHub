@@ -3,132 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Courses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
     <link rel="stylesheet" href="static/styles.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <style>
-        body{
-        background: #395a7f;
-        color:white
-        }
-     </style>
-    <title>Add Courses</title>
     <style>
         body {
-        
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 50vh;
-            margin: 0;
-            flex-direction: column; /* Center elements vertically */
-        }
-
-        #container {
-            text-align: center;
-        }
-
-        #addCourses {
-            width: 200px; /* Adjusted width for the dropdown */
-            margin-bottom: 10px; /* Added margin to move it down */
-        }
-
-        #currentCourses {
-            width: 200px; /* Adjusted width for the dropdown */
-            margin-bottom: 10px; /* Added margin to move it down */
-        }
-
-        #addedText {
-            width: 200px; /* Adjusted width for the text box */
-        }
-
-        #submitButton {
-            margin-top: 10px; /* Added margin to move the button down */
+            background: #395a7f;
+            font-family: 'Montserrat', sans-serif;
         }
     </style>
 </head>
 <body>
-    <div style="margin-bottom: 140px; text-align: center; margin-top: 130px;">
-        <h1 style="font-size: 36px; margin-bottom: 10px;">📚 Add Courses</h1>
-        <p style="font-size: 18px;">
-            Select all the courses you are currently in by clicking the dropdown and begin typing the course codes.<br>
-            When you select the <strong>add</strong> button, that course will be displayed on the added list.<br>
-            After you have selected all of your courses, press the <strong>submit</strong> button.
-        </p>
-    </div>
-    
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%; border-radius: 1rem;">
+            <div class="card-body text-center">
+                <h1 class="card-title mb-3">📚 Add Courses</h1>
+                <p class="card-text text-muted">
+                    Select all the courses you are currently in by using the dropdown. Click <strong>Add</strong> to move courses to your list. When done, click <strong>Submit</strong>.
+                </p>
 
-    <form id="courseForm" action="/submit_courses" method="POST" onsubmit="return showDone();">
-        <label for="addCourses" style="font-size: 20px;">Select a Course:</label>
-        <select id="addCourses" name="addCourses" style="font-size: 13px; padding: 8px; margin-right: 10px;">
-            {% for course in courses %}
-                <option value="{{ course}}">
-                    {{ course }}
-                </option>
-            {% endfor %}
-        </select>
-        <button id="addButton" onclick="addCourse()" type="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" class="btn btn-light">
-            Add
-        </button>
-        <br><br>
-    
-        <label for="addedText" style="font-size: 20px;">Added:</label>
-        <select id="currentCourses" name="currentCourses" style="font-size: 13px; padding: 8px; margin-right: 10px;">
-        </select>
-        <button id="removeButton" onclick="removeCourse()" type="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" class="btn btn btn-light">
-            Remove
-        </button>
-        <br><br>
-    
-        <input type="hidden" id="hiddenCourses" name="hiddenCourses">
-        <center><button id="submitButton" type="submit" style="--bs-btn-padding-y: .3rem; --bs-btn-padding-x: .55rem; --bs-btn-font-size: 1.25rem;" class="btn btn btn-light">
-            Submit
-        </button></center>
-    </form>
+                <form id="courseForm" action="/submit_courses" method="POST" onsubmit="return showDone();">
+                    <div class="mb-3 text-start">
+                        <label for="addCourses" class="form-label fw-bold">Select a Course:</label>
+                        <div class="input-group">
+                            <select id="addCourses" name="addCourses" class="form-select">
+                                {% for course in courses %}
+                                    <option value="{{ course }}">{{ course }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn btn-outline-primary" onclick="addCourse()">Add</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 text-start">
+                        <label for="currentCourses" class="form-label fw-bold">Added Courses:</label>
+                        <div class="input-group">
+                            <select id="currentCourses" name="currentCourses" class="form-select">
+                                <!-- Filled dynamically -->
+                            </select>
+                            <button type="button" class="btn btn-outline-danger" onclick="removeCourse()">Remove</button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="hiddenCourses" name="hiddenCourses">
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button id="submitButton" type="submit" class="btn btn-success btn-lg">Submit</button>
+                        <a href="/home" class="btn btn-outline-secondary">Back to Home</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script>
         function removeCourse() {
-            var elementRemove = document.getElementById("currentCourses");
-            var selectedOption = elementRemove.options[elementRemove.selectedIndex];
-            
-            var elementAdd = document.getElementById("addCourses");
-            var option = document.createElement("option");
-            option.text = selectedOption.value;
-            elementAdd.add(option); // adding to addCourses list
-
-            elementRemove.remove(elementRemove.selectedIndex); // removing from CurrentCourses
+            const current = document.getElementById("currentCourses");
+            const selected = current.options[current.selectedIndex];
+            const addList = document.getElementById("addCourses");
+            const option = document.createElement("option");
+            option.text = selected.value;
+            addList.add(option);
+            current.remove(current.selectedIndex);
         }
 
         function addCourse() {
-            var elementSelect = document.getElementById("addCourses");
-            
-            var elementAdd = document.getElementById("currentCourses");
-            var option = document.createElement("option");
-            option.text = elementSelect[elementSelect.selectedIndex].value;
-            elementAdd.add(option); // adding to currentCourses list
-
-            elementSelect.remove(elementSelect.selectedIndex); // removing from addCourses
+            const select = document.getElementById("addCourses");
+            const added = document.getElementById("currentCourses");
+            const option = document.createElement("option");
+            option.text = select[select.selectedIndex].value;
+            added.add(option);
+            select.remove(select.selectedIndex);
         }
 
         function showDone() {
-            var currentCoursesSelect = document.getElementById("currentCourses");
-            var currentCoursesList = [];
+            const current = document.getElementById("currentCourses");
+            const courseList = [];
 
-            // loop through all options in currentCoursesSelect
-            for (var i = 0; i < currentCoursesSelect.options.length; i++) {
-                currentCoursesList.push(currentCoursesSelect.options[i].value);
+            for (let i = 0; i < current.options.length; i++) {
+                courseList.push(current.options[i].value);
             }
 
-            // set hiddenCourses to the list of courses
-            document.getElementById("hiddenCourses").value = JSON.stringify(currentCoursesList); // Convert list to JSON string
-
-            alert("Selected Courses:\n" + currentCoursesList.join("\n"));
+            document.getElementById("hiddenCourses").value = JSON.stringify(courseList);
+            alert("Selected Courses:\n" + courseList.join("\n"));
             alert("Successfully submitted!");
-
-            // submit the form
-            document.getElementById("courseForm").submit();
-
-            }
+            return true;
+        }
     </script>
 </body>
 </html>

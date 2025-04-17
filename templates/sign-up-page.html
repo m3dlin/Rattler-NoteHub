@@ -1,83 +1,100 @@
 <!DOCTYPE html>
-
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
-        <link rel="stylesheet" href="static/styles.css">
-        <title>Rattler NoteHub</title>
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rattler NoteHub</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link rel="stylesheet" href="static/styles.css">
     
     <style>
-        body{
-        background: #395a7f;
+        body {
+            background: #395a7f;
+            font-family: 'Montserrat', sans-serif;
         }
-     </style>
-        <body>
-            <h1 style="color: white; text-align: center; padding-top: 20px;">Sign Up</h1>
-            <p></p>
+    </style>
+</head>
+<body>
 
-            <!--checking to see if there are any flash messages. If so, display alert -->
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card shadow p-4" style="width: 100%; max-width: 500px;">
+            <h2 class="text-center mb-4">Sign Up</h2>
+
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     <script>
-                        alert('{{messages[0]}}') // sending flash message as an alert to the user
+                        alert('{{ messages[0] }}')
                     </script>
-                
                 {% endif %}
             {% endwith %}
 
-
             <form id="studentForm" action="/add_user" method="POST" onsubmit="return validateForm();">
-                <center><label for="fname" style="color: white;">First Name:</label><br></center>
-                <center><input type="text" id="fname" name="fname"><br></center><br>
-                <center><label for="lname" style="color: white;">Last name:</label><br></center>
-                <center><input type="text" id="lname" name="lname"><br></center><br>
-                <center><label for="StudentID" style="color: white;">Student ID:</label><br></center>
-                <center><span class="student-id-prefix" style="color: white;">S00 </span><input type="text" id="StudentID" name="StudentID" style="width: 150px;"><br></center><br>
-                <center><label for="Email" style="color: white;">Email:</label><br></center>
-                <center>
-                    <input type="text" id="Email" name="Email" style="width: 150px;">
-                    <span class="email-suffix" style="color: white;">@mail.stmarytx.edu</span>
-                    <br></center><br>
-                <center><label for="Pword" style="color: white;">Password:</label><br></center>
-                <center><input type="text" id="Pword" name="Pword"><br></center><br>
-                <center><input type="submit" value="Submit"><br><br></center>
+
+                <div class="mb-3">
+                    <label for="fname" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="fname" name="fname">
+                </div>
+
+                <div class="mb-3">
+                    <label for="lname" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lname" name="lname">
+                </div>
+
+                <div class="mb-3">
+                    <label for="StudentID" class="form-label">Student ID</label>
+                    <div class="input-group">
+                        <span class="input-group-text">S00</span>
+                        <input type="text" class="form-control" id="StudentID" name="StudentID">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Email</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="Email" name="Email">
+                        <span class="input-group-text">@mail.stmarytx.edu</span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Pword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="Pword" name="Pword">
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary" style="background-color: #395a7f;">Submit</button>
+                </div>
+                <div class="d-grid mt-2">
+                    <a href="/" class="btn btn-outline-secondary">Back to Sign In</a>
+                </div>
+
             </form>
-
-        </body>
+            
+        </div>
         
+    </div>
 
-        <script>
+    <script>
+        function validateForm() {
+            var fname = document.getElementById("fname").value;
+            var lname = document.getElementById("lname").value;
+            var studentID = document.getElementById("StudentID").value;
+            var email = document.getElementById("Email").value;
+            var pword = document.getElementById("Pword").value;
 
-            function validateForm() {
-                // getting values from the form
-                var fname = document.getElementById("fname").value;
-                var lname = document.getElementById("lname").value;
-                var studentID = document.getElementById("StudentID").value;
-                var email = document.getElementById("Email").value;
-                var pword = document.getElementById("Pword").value;
-
-
-                // check if fields are left empty
-                if (fname.trim() === '' || lname.trim() === '' || studentID.trim() === '' || email.trim() === '' || pword.trim() === '') {
-                    alert("Please fill in all fields.");
-                    return false; // prevent form submission
-                }
-                // checks if student ID is a 6 digit integer
-                else if (!/^\d{6}$/.test(studentID)) {
-                    alert("Student ID must be a 6-digit integer.");
-                    return false; // prevent form submission
-                }
-                else{
-                    return true; // form is ready for submission
-                }
-
+            if (fname.trim() === '' || lname.trim() === '' || studentID.trim() === '' || email.trim() === '' || pword.trim() === '') {
+                alert("Please fill in all fields.");
+                return false;
+            } else if (!/^\d{6}$/.test(studentID)) {
+                alert("Student ID must be a 6-digit integer.");
+                return false;
+            } else {
+                return true;
             }
+        }
+    </script>
 
-        </script> 
-
-    </body>
+</body>
 </html>
