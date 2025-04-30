@@ -11,7 +11,7 @@ from utils.database import (get_course_nums, check_credentials, get_student_info
                             increment_downvotes, add_bookmark, delete_bookmark, check_bookmark_status, 
                             add_note_to_db,get_course_notes_with_tags, add_discussion_post, get_discussion_posts,
                             add_comment_to_post, get_comment_from_note, add_comment_to_note, get_notifications,
-                            time_ago)
+                            time_ago, get_notification, delete_notification_by_id)
 from utils.firebase import delete_file_from_firebase, upload_to_firebase
 from utils.quiz_generator import generate_quiz, format_quiz_to_json
 from dotenv import load_dotenv
@@ -224,6 +224,20 @@ def inbox_page():
             notification.time_ago = time_ago(created_at)
 
     return render_template('inbox-page.html', notifications=notifications), 200
+
+@app.route('/delete_notification/<notification_id>', methods=['POST'])
+def delete_notification(notification_id):
+    print("Received delete request for notification ID:", notification_id)
+
+    notification = get_notification(notification_id)  # Your helper function
+    if notification:
+        # Assuming you have a proper delete_notification_by_id() helper
+        success = delete_notification_by_id(notification_id)
+        if success:
+            return '', 200
+        else:
+            return 'Failed to delete', 500
+    return 'Notification not found', 404
 
 
 # FUTURE - 'quiz<noteId>' route to be implemented

@@ -655,6 +655,9 @@ def add_comment_to_note(note_id, student_id, message):
     session.commit()
     return True
 
+def get_notification(notification_id):
+    notification = session.query(Notification).filter_by(notification_id=notification_id).first()
+    return notification
 
 def get_notifications(student_id):
     notifications_list = []
@@ -681,6 +684,21 @@ def get_notifications(student_id):
             notifications_list.append(notification)
     return notifications_list
 
+def delete_notification_by_id(notification_id):
+    notification = session.query(Notification).filter_by(notification_id=notification_id).first()
+    
+    # if the note is found
+    if notification:
+        # try to delete note
+        try:
+            session.query(Notification).filter_by(notification_id=notification.notification_id).delete()
+            session.commit()
+            return True
+        except Exception as e:
+            session.rollback()
+            return False
+    else:
+        return False
 
 # function to calculate time ago with more precision
 def time_ago(created_at):

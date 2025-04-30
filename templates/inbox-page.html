@@ -58,7 +58,10 @@
     </body>
 
     <script>
-        // JavaScript to handle dynamic message display
+
+        let selectedMessageId = null;
+
+        // JS to handle dynamic message display
         document.querySelectorAll('#inboxList .list-group-item').forEach(item => {
             item.addEventListener('click', () => {
                 const title = item.getAttribute('data-title');
@@ -67,8 +70,11 @@
                 const time = item.getAttribute('data-time');
                 const id = item.getAttribute('data-id');
                 const checkId = item.getAttribute('data-check-id');
-                
-                // Populate message details
+
+                const notificationId = item.getAttribute('id');
+                selectedMessageId = notificationId;
+
+                // message details
                 document.getElementById('messageTitle').textContent = title;
                 document.getElementById('messageBody').textContent = message;
                 document.getElementById('messageSender').textContent = sender;
@@ -78,16 +84,6 @@
                 } else {
                     document.getElementById('original-post-btn').setAttribute('onclick', `window.location.href='/${id}'`);
                 }
-
-                // Delete button functionality
-                
-            function deleteNotification() {
-                var confirmation = confirm("Are you sure you want to delete this message?");
-                if (confirmation) {
-
-                }
-            }
-                
                 
     
                 // Toggle visibility
@@ -95,6 +91,33 @@
                 document.getElementById('messageContent').classList.remove('d-none');
             });
         });
+
+        
+        function deleteNotification() {
+            var confirmation = confirm("Are you sure you want to delete this message?");
+            if (confirmation && selectedMessageId) {
+                fetch(`/delete_notification/${selectedMessageId}`, {
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.status === 200) {
+                        // remove the message from the list
+                        document.getElementById(selectedMessageId).remove();
+
+                        // reset the message display
+                        document.getElementById('messageContent').classList.add('d-none');
+                        document.getElementById('defaultMessage').classList.remove('d-none');
+                    } else {
+                        alert('Failed to delete message.');
+                    }
+                });
+            }
+        }
+
+        document.getElementById('delete-btn').addEventListener('click', deleteNotification)
+
+
+
     </script>
 
 </html>
